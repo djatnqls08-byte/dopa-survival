@@ -145,8 +145,11 @@
     });
     drawStats(hit.filter((k) => (c.fx[k] || 0) < 0));
     const mine = document.createElement("p"); mine.className = "mine"; log().appendChild(mine);
-    if (photoUrl) { const av = document.createElement("span"); av.className = "av"; av.style.backgroundImage = `url(${photoUrl})`; mine.appendChild(av); }   /* 내 선택 줄 앞에 내 캐릭터 사진 */
-    mine.appendChild(document.createTextNode(fill(c.t)));
+    if (photoUrl) {   /* 내 선택 줄 = 채팅처럼 큰 캐릭터 사진 + 이름 + 고른 행동 (10/22 "너무 찌깐하다") */
+      mine.classList.add("has-av");
+      const av = document.createElement("span"); av.className = "av"; av.style.backgroundImage = `url(${photoUrl})`; mine.appendChild(av);
+      const box = document.createElement("span"); box.className = "say"; const nm = document.createElement("b"); nm.textContent = name; box.appendChild(nm); box.appendChild(document.createTextNode(fill(c.t))); mine.appendChild(box);
+    } else mine.textContent = fill(c.t);
     const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없어요</span><span>${path.length}턴</span>`; log().appendChild(meta);
     const p = document.createElement("p"); p.textContent = brk(fill(c.r)); log().appendChild(p);
     const add = [mine, p];

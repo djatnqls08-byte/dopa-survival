@@ -104,8 +104,11 @@ button { font-family:inherit; }
 
 /* 도파 플레이 화면 */
 .playbar { position:sticky; top:0; z-index:6; display:flex; align-items:center; gap:6px; padding:max(10px, env(safe-area-inset-top,0px)) 0 10px; background:var(--bg); border-bottom:1px solid var(--border); margin:0 calc(-1 * max(16px, env(safe-area-inset-left,0px))); padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); overflow-x:auto; scrollbar-width:none; }
-.playbar .me { flex-shrink:0; width:30px; height:30px; border-radius:9px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); }
-.log .mine .av { display:inline-block; width:26px; height:26px; border-radius:8px; background:#1F2023 center/cover no-repeat; vertical-align:-7px; margin-right:9px; border:1px solid var(--border2); }
+.playbar .me { flex-shrink:0; width:36px; height:36px; border-radius:11px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); }
+.log .mine.has-av { display:flex; gap:14px; align-items:flex-start; }
+.log .mine .av { flex-shrink:0; width:64px; height:64px; border-radius:16px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); box-shadow:0 4px 14px rgba(0,0,0,.35); }
+.log .mine .say { display:flex; flex-direction:column; gap:4px; min-width:0; padding-top:4px; }
+.log .mine .say b { font-size:.82rem; font-weight:800; color:var(--accent); }
 .playbar .when { display:inline-flex; align-items:center; gap:6px; font-size:.92rem; font-weight:600; color:var(--muted); margin-right:4px; white-space:nowrap; }
 .playbar .when svg { width:18px; height:18px; }
 .pchip { display:inline-flex; align-items:center; gap:5px; height:30px; padding:0 10px; border-radius:9px; background:var(--panel2); font-size:.86rem; font-weight:700; color:#d8d8d6; white-space:nowrap; font-variant-numeric:tabular-nums; }
