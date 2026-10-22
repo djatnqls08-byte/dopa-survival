@@ -101,6 +101,7 @@ button { font-family:inherit; }
 .pchip.low { color:var(--danger); } .pchip.low svg { color:var(--danger); }
 .pchip.hit { animation:hit .5s; }
 .log { font-family:'Gowun Batang',serif; font-size:1.06rem; line-height:1.95; word-break:keep-all; padding:22px 0 0; display:flex; flex-direction:column; gap:22px; }
+.log p, .log .sceneart { scroll-margin-top:72px; }
 .log p { margin:0; opacity:0; transform:translateY(6px); transition:opacity .5s, transform .5s; }
 .log p.in { opacity:1; transform:none; }
 .log .sceneart { border-radius:14px; overflow:hidden; border:1px solid var(--border); aspect-ratio:4/3; }
@@ -164,12 +165,8 @@ button { font-family:inherit; }
     <div class="playbar" id="playbar"></div>
     <div class="log" id="log"></div>
     <div class="dock">
-      <div class="sugg" id="sugg"></div>
-      <div class="inputbox">
-        <div class="ph" id="ph">어떻게 할까?</div>
-        <div class="ibar"><b>괴담</b> · <span id="pnum">01/10</span> · 지하 4층<button type="button" class="go2" id="go2" disabled aria-label="계속"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
-      </div>
-      <div class="foottxt">DOPA 기록보관소 · 미리 써 둔 선택형 이야기</div>
+      <div class="choices" id="sugg"></div>
+      <div class="foottxt"><span id="pnum">01/10</span> · DOPA 기록보관소 · 미리 써 둔 선택형 이야기</div>
     </div>
   </section>
 

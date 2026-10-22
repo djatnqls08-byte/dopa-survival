@@ -57,17 +57,20 @@
     const next = () => { const u = tries.shift(); if (!u) { box.remove(); return; } const t = new Image(); t.onload = () => { im.src = u; box.classList.remove("hide"); }; t.onerror = next; t.src = u; };
     next();
   }
-  function setDock(choices) {   // 아래: 추천 선택지 칩 + 입력창 모양
+  // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
+  function setDock(choices, next) {
     const sg = $("sugg"); sg.innerHTML = "";
-    $("pnum").textContent = `${String(Math.min(i + 1, S.scenes.length)).padStart(2, "0")}/${S.scenes.length}`;
-    const go = $("go2"); go.disabled = true; go.onclick = null;
+    $("pnum").textContent = `기록 ${String(Math.min(i + 1, S.scenes.length)).padStart(2, "0")}/${S.scenes.length}`;
     if (choices) {
-      $("ph").textContent = "어떻게 할까?";
-      choices.forEach((c) => {
-        const b = document.createElement("button"); b.type = "button"; b.textContent = fill(c.t);
-        if (c.need === "bat" && st.bat <= 0) { b.disabled = true; b.title = "배터리가 없다"; b.textContent += " (배터리 없음)"; }
+      const hint = document.createElement("div"); hint.className = "hint"; hint.textContent = "어떻게 할까?"; sg.appendChild(hint);
+      choices.forEach((c, n) => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "opt";
+        b.innerHTML = `<span class="n">${n + 1}</span><span></span>`; b.querySelectorAll("span")[1].textContent = fill(c.t);
+        if (c.need === "bat" && st.bat <= 0) { b.disabled = true; const sm = document.createElement("small"); sm.textContent = "배터리가 없다"; b.querySelectorAll("span")[1].appendChild(sm); }
         b.addEventListener("click", () => choose(c)); sg.appendChild(b);
       });
+    } else if (next) {
+      const nb = document.createElement("button"); nb.type = "button"; nb.className = "btn main"; nb.textContent = next.label; nb.addEventListener("click", next.go); sg.appendChild(nb);
     }
   }
   function scene() {
@@ -86,18 +89,16 @@
     });
     drawStats(hit.filter((k) => (c.fx[k] || 0) < 0));
     const mine = document.createElement("p"); mine.className = "mine"; mine.textContent = fill(c.t); log().appendChild(mine);
-    const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없는 선택</span><span>${path.length}턴</span>`; log().appendChild(meta);
+    const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없어요</span><span>${path.length}턴</span>`; log().appendChild(meta);
     const p = document.createElement("p"); p.textContent = fill(c.r); log().appendChild(p);
     const add = [mine, p];
     if (deltas.length) { const d = document.createElement("div"); d.className = "deltas"; d.innerHTML = deltas.map(([k, v]) => `<span class="delta${v > 0 ? " up" : ""}">${LABEL[k]} ${v > 0 ? "+" : "−"}${Math.abs(v)}</span>`).join(""); log().appendChild(d); }
     const dead = st.hp <= 0 ? "hp" : st.san <= 0 ? "san" : null;
     if (dead) { const q = document.createElement("p"); q.textContent = fill(S.deaths[dead]); log().appendChild(q); add.push(q); }
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-    setDock(null);
-    const go = $("go2"); go.disabled = false;
-    if (dead) { $("ph").textContent = "기록이 끊겼다. 기록을 열람할까?"; go.onclick = () => finish(dead === "hp" ? "lost" : "redacted"); }
-    else if (i + 1 < S.scenes.length) { $("ph").textContent = "계속하려면 화살표를 눌러"; go.onclick = () => { i++; scene(); }; }
-    else { $("ph").textContent = "06:00. 기록을 열람할까?"; go.onclick = () => finish(); }
+    if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
+    else if (i + 1 < S.scenes.length) setDock(null, { label: "계속 ▸", go: () => { i++; scene(); } });
+    else setDock(null, { label: "06:00 · 기록 열람 ▸", go: () => finish() });
   }
 
   // ── 판정 ──
