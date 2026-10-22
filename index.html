@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>괴담 생존 적합성 평가 · DOPA 기록보관소</title>
+<meta name="description" content="내 자캐는 괴담에서 살아남을 수 있을까? 10개의 기록을 읽고 판정을 받아 보세요.">
+<meta property="og:title" content="괴담 생존 적합성 평가 · DOPA 기록보관소">
+<meta property="og:description" content="피험자: 당신의 자캐 · 판정 결과는 열람 등급 1까지만 공개됩니다">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#0e0d10; --paper:#ebe5d6; --paper2:#dfd7c3; --ink:#1b1a1d; --muted:#6f6758; --red:#b3122b; --line:#c9bfa8; --pink:#ff2d78; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--ink); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
+body { min-height:100vh; display:flex; justify-content:center; padding-block:24px 48px; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); }
+.doc { width:100%; max-width:560px; background:var(--paper); border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,.6); position:relative; overflow:hidden; }
+.doc::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(0,0,0,.025) 0 1px, transparent 1px 3px); pointer-events:none; }
+.head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 22px 12px; border-bottom:2px solid var(--ink); font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.04em; word-break:keep-all; }
+.head .lv { white-space:nowrap; }
+.head b { display:block; font-size:.85rem; letter-spacing:.12em; }
+.head .lv { text-align:right; color:var(--red); font-weight:600; }
+.body { padding:22px; display:flex; flex-direction:column; gap:16px; position:relative; }
+h1 { margin:0; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:1.6rem; word-break:keep-all; line-height:1.3; letter-spacing:-.02em; text-wrap:balance; }
+.sub { margin:0; word-break:keep-all; color:var(--muted); font-size:.92rem; line-height:1.65; }
+.mono { font-family:'IBM Plex Mono',monospace; font-size:.74rem; letter-spacing:.08em; color:var(--muted); }
+.redact { display:inline-block; background:var(--ink); color:transparent; border-radius:1px; padding:0 .2em; line-height:1.2; user-select:none; }
+label.f { display:flex; flex-direction:column; gap:6px; font-weight:700; font-size:.88rem; }
+input[type=text] { font:inherit; font-size:1rem; padding:12px 14px; border:1.5px solid var(--ink); border-radius:4px; background:#f6f2e8; color:var(--ink); }
+.photo { display:flex; align-items:center; gap:12px; }
+.photo .thumb { width:64px; height:64px; border:1.5px dashed var(--muted); border-radius:4px; background:#f6f2e8 center/cover no-repeat; flex-shrink:0; filter:grayscale(1) contrast(1.1); }
+.photo button { font:inherit; font-size:.85rem; }
+.btn { font:inherit; font-weight:800; font-size:1rem; padding:14px 18px; border-radius:4px; border:2px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; letter-spacing:.02em; }
+.btn.ghost { background:transparent; color:var(--ink); }
+.btn.pink { background:var(--pink); border-color:var(--pink); color:#fff; }
+.btn:disabled { opacity:.4; cursor:default; }
+.site { font-family:'IBM Plex Mono',monospace; font-size:.74rem; letter-spacing:.06em; color:var(--red); font-weight:600; }
+.q { font-family:'Nanum Myeongjo',serif; font-size:1.12rem; line-height:1.75; margin:0; word-break:keep-all; }
+.choices { display:flex; flex-direction:column; gap:8px; }
+.choice { text-align:left; font:inherit; font-size:.97rem; line-height:1.5; padding:13px 14px; background:#f6f2e8; border:1.5px solid var(--line); border-radius:4px; color:var(--ink); cursor:pointer; display:flex; gap:10px; align-items:flex-start; word-break:keep-all; }
+.choice:hover { border-color:var(--ink); }
+.choice i { font-style:normal; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--muted); }
+.bar { height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
+.bar > div { height:100%; background:var(--red); transition:width .25s; }
+.stamp { position:absolute; right:18px; top:14px; transform:rotate(-12deg); border:3px solid var(--red); color:var(--red); font-family:'IBM Plex Mono',monospace; font-weight:600; padding:4px 10px; letter-spacing:.2em; font-size:.8rem; opacity:.8; }
+canvas { width:100%; height:auto; display:block; border-radius:4px; box-shadow:0 4px 16px rgba(0,0,0,.25); }
+.row { display:flex; gap:8px; flex-wrap:wrap; }
+.row .btn { flex:1 1 140px; }
+.foot { padding:14px 22px 18px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
+.foot img { height:18px; display:block; }
+.hide { display:none !important; }
+.fine { word-break:keep-all; font-size:.72rem; color:var(--muted); line-height:1.6; }
+</style>
+</head>
+<body>
+<main class="doc">
+  <div class="head">
+    <div><b>DOPA 이상현상 기록보관소</b>생존 적합성 평가서 · 양식 D-4</div>
+    <div class="lv">열람 등급 1<br><span id="caseNo">No. ----</span></div>
+  </div>
+
+  <!-- 1. 표지 -->
+  <section class="body" id="intro">
+    <div class="stamp">CLASSIFIED</div>
+    <span class="mono">▌ 피험자 등록</span>
+    <h1>당신의 자캐는<br>괴담에서 살아남을 수 있을까</h1>
+    <p class="sub">기록보관소가 수집한 열 개의 현장 기록을 읽고, 피험자라면 어떻게 할지 고르세요. 판정 결과는 <span class="redact">열람등급3</span> 기록으로 남습니다.</p>
+    <label class="f">피험자 이름 (자캐 이름)<input type="text" id="name" maxlength="14" placeholder="예: 윤세라" autocomplete="off"></label>
+    <div class="photo">
+      <div class="thumb" id="thumb"></div>
+      <div class="row" style="flex:1">
+        <button type="button" class="btn ghost" id="pick">사진 넣기 (선택)</button>
+      </div>
+      <input type="file" id="file" accept="image/*" class="hide">
+    </div>
+    <button type="button" class="btn" id="start" disabled>평가 시작</button>
+    <p class="fine">사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않아요. 모든 기록은 픽션입니다.</p>
+  </section>
+
+  <!-- 2. 질문 -->
+  <section class="body hide" id="quiz">
+    <div class="bar"><div id="prog" style="width:0%"></div></div>
+    <span class="mono" id="qNo">기록 01 / 10</span>
+    <span class="site" id="qSite"></span>
+    <p class="q" id="qText"></p>
+    <div class="choices" id="qChoices"></div>
+  </section>
+
+  <!-- 3. 결과 -->
+  <section class="body hide" id="result">
+    <span class="mono">▌ 판정 결과</span>
+    <canvas id="card" width="1080" height="1350"></canvas>
+    <div class="row">
+      <button type="button" class="btn" id="save">판정서 저장 (PNG)</button>
+      <button type="button" class="btn ghost" id="copy">결과 문구 복사</button>
+    </div>
+    <a class="btn pink" id="tumblbug" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">이런 괴담을 내 자캐로 직접 플레이하기 → 텀블벅 알림 신청</a>
+    <button type="button" class="btn ghost" id="again">다른 피험자로 다시 하기</button>
+    <p class="fine" id="copied"></p>
+  </section>
+
+  <div class="foot">
+    <span>설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈</span>
+    <img src="logo.svg" alt="DOPA">
+  </div>
+</main>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
