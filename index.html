@@ -175,6 +175,14 @@ button { font-family:inherit; }
 .log .epi { color:#d8d6d2; }
 .log .endmark { text-align:center; font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.2em; color:var(--muted); }
 
+/* 00호 고르기 (그 / 그녀) */
+.gsel { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gbtn { display:flex; align-items:center; gap:12px; padding:10px; border-radius:14px; background:var(--panel); border:1px solid var(--border); color:var(--muted); cursor:pointer; font:inherit; text-align:left; }
+.gbtn .gimg { flex-shrink:0; width:52px; height:52px; border-radius:12px; background:#1F2023 center 18%/cover no-repeat; }
+.gbtn b { font-size:1rem; font-weight:800; color:#cfcfcd; }
+.gbtn[aria-pressed="true"] { border-color:var(--accent); background:rgba(240,24,94,.07); }
+.gbtn[aria-pressed="true"] b { color:var(--text); }
+
 /* 결말 */
 .end { display:flex; flex-direction:column; gap:10px; padding-bottom:max(24px, env(safe-area-inset-bottom,0px)); }
 .end canvas { width:100%; height:auto; display:block; border-radius:16px; border:1px solid var(--border); }
@@ -201,6 +209,7 @@ button { font-family:inherit; }
       <h1 id="coverTitle"></h1>
     </div>
     <p class="lead" id="coverLead"></p>
+    <div id="gender"></div>
     <div class="card">
       <p class="label">현장 규칙</p>
       <ul class="rules" id="coverRules"></ul>

@@ -16,7 +16,12 @@
 
   // 받침에 맞는 조사
   const batchim = (w) => { const c = String(w).trim().slice(-1).charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : /[lmnr]$/i.test(w); };
-  const fill = (t) => { const b = batchim(name); return String(t).replace(/\{N\}\{은\}/g, name + (b ? "은" : "는")).replace(/\{N\}\{이\}/g, name + (b ? "이" : "가")).replace(/\{N\}\{을\}/g, name + (b ? "을" : "를")).replace(/\{N\}\{와\}/g, name + (b ? "과" : "와")).replace(/\{N\}\{아\}/g, name + (b ? "아" : "야")).replace(/\{N\}/g, name); };
+  // 00호 성별 (10/22): {그} = 그/그녀 · {{남|여}} 묘사 갈림 · 그림은 여성판(fimg·fcover)으로
+  let gender = "m";
+  const gtxt = (t) => String(t).replace(/\{그\}/g, gender === "f" ? "그녀" : "그").replace(/\{\{([^|{}]*)\|([^{}]*)\}\}/g, (m, a, b) => (gender === "f" ? b : a));
+  const coverKey = () => (gender === "f" && S.fcover) || S.cover || "cover";
+  const imgKey = (sc) => (gender === "f" && S.fimg ? S.fimg[sc.id] || null : sc.img);
+  const fill = (t) => { const b = batchim(name); return gtxt(t).replace(/\{N\}\{은\}/g, name + (b ? "은" : "는")).replace(/\{N\}\{이\}/g, name + (b ? "이" : "가")).replace(/\{N\}\{을\}/g, name + (b ? "을" : "를")).replace(/\{N\}\{와\}/g, name + (b ? "과" : "와")).replace(/\{N\}\{아\}/g, name + (b ? "아" : "야")).replace(/\{N\}/g, name); };
 
   // 이야기 줄나눔 (10/22 자기야): 따로 선 대사 "…" 는 앞뒤 서술과 줄을 나눔 · "…"라는/하고 처럼 붙은 대사는 그대로
   function brk(t) {
@@ -41,6 +46,14 @@
   }
   // ── 표지: 기록 고르기 (1편·2편) ──
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // 표지: 00호 고르기 (그 / 그녀) — 편에 여성판(fcover)이 있을 때만
+  function drawGender() {
+    const box = $("gender"); if (!box) return;
+    if (!S.fcover) { box.classList.add("hide"); return; }
+    box.classList.remove("hide");
+    box.innerHTML = `<p class="label">유리 너머의 00호</p><div class="gsel">${[["m", "그", S.cover], ["f", "그녀", S.fcover]].map(([k, t, im]) => `<button type="button" class="gbtn" data-g="${k}" aria-pressed="${gender === k}"><span class="gimg" style="background-image:url(img/${im}.webp)"></span><b>${t}</b></button>`).join("")}</div>`;
+    box.querySelectorAll(".gbtn").forEach((b) => b.addEventListener("click", () => { gender = b.dataset.g; $("coverLead").textContent = gtxt(S.lead); setArt($("coverImg"), coverKey()); drawGender(); }));
+  }
   function pickEp(n) {
     S = EPS[n];
     document.querySelectorAll(".ep").forEach((b, k) => b.setAttribute("aria-selected", String(k === n)));
@@ -48,11 +61,12 @@
     $("coverChips").innerHTML = `<span class="chip horror">괴담</span>` + S.chips.map((c, k) => `<span class="chip${k === 0 ? " mono" : ""}">${esc(c)}</span>`).join("");
     $("coverKicker").textContent = `DOPA 기록보관소 · 기록 ${String(n + 1).padStart(2, "0")}`;
     $("coverTitle").textContent = S.title;
-    $("coverLead").textContent = S.lead;
+    $("coverLead").textContent = gtxt(S.lead);
+    drawGender();
     $("coverRules").innerHTML = S.rules.map((r, k) => `<li><b>0${k + 1}</b><span>${esc(r).replace(/, /g, ",<br>")}</span></li>`).join("");
     $("start").textContent = S.id === "ep2" ? "관측 시작" : "순찰 시작";
     $("again").textContent = S.id === "ep2" ? "다른 캐릭터로 다시 관측" : "다른 캐릭터로 다시 순찰";
-    setArt($("coverImg"), S.cover || "cover");
+    setArt($("coverImg"), coverKey());
   }
   $("eps").innerHTML = EPS.map((e, k) => `<button type="button" class="ep" role="tab" aria-selected="false"><b>기록 ${String(k + 1).padStart(2, "0")} · ${esc(e.code)}${k === EPS.length - 1 && k > 0 ? '<i class="new">NEW</i>' : ""}</b><span>${esc(e.title)}</span></button>`).join("");
   document.querySelectorAll(".ep").forEach((b, k) => b.addEventListener("click", () => pickEp(k)));
@@ -111,7 +125,8 @@
     box.style.setProperty("--mline", `rgb(${c})`);
     box.innerHTML = `<div class="mt">${esc(when)} · ${sc.mark || `기록 ${String(step).padStart(2, "0")}`}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
     log().appendChild(box);
-    if (sc.img) { const tries = ["webp", "jpg", "png"].map((e) => `img/${sc.img}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
+    const ik = sc.mark ? sc.img : imgKey(sc);
+    if (ik) { const tries = ["webp", "jpg", "png"].map((e) => `img/${ik}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
     return box;
   }
   // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
@@ -157,7 +172,7 @@
     const add = [mine, p];
     if (deltas.length) { const d = document.createElement("div"); d.className = "deltas"; d.innerHTML = deltas.map(([k, v]) => `<span class="delta${v > 0 ? " up" : ""}">${LABEL[k]} ${v > 0 ? "+" : "−"}${Math.abs(v)}</span>`).join(""); log().appendChild(d); }
     const dead = st.hp <= 0 ? "hp" : st.san <= 0 ? "san" : null;
-    if (dead && S.deathImg) { const cg = addMood({ tag: `${String(S.scenes[i].tag).split("·")[0].trim()} · 기록 중단`, img: S.deathImg, mark: "중단" }); requestAnimationFrame(() => cg.classList.add("in")); }   /* 체력·정신 0 CG (2편) */
+    if (dead && S.deathImg && gender === "m") { const cg = addMood({ tag: `${String(S.scenes[i].tag).split("·")[0].trim()} · 기록 중단`, img: S.deathImg, mark: "중단" }); requestAnimationFrame(() => cg.classList.add("in")); }   /* 체력·정신 0 CG (2편) */
     if (dead) { const q = document.createElement("p"); q.textContent = brk(fill(S.deaths[dead])); log().appendChild(q); add.push(q); }
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
@@ -190,7 +205,7 @@
     const res = judge(endKey);
     endKey = res.key;
     if (!res.e.epi) return finish(endKey);
-    const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: res.e.img, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
+    const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: gender === "m" ? res.e.img : null, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
     const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
     reveal(add); setTimeout(() => cg.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -235,7 +250,7 @@
     const SERIF = "'Gowun Batang', serif", MONO = "'IBM Plex Mono', monospace", SANS = "'Pretendard Variable', Pretendard, sans-serif";
     ctx.fillStyle = "#121314"; ctx.fillRect(0, 0, W, H);   // 도파 나이트 바탕
     // 위: 그림 (결말 그림 → 없으면 안개) + 캐릭터 사진(흑백 폴라로이드)
-    const ei = (await firstImg(e.img)) || (S.cover ? await firstImg(S.cover) : null);   // 결말 CG 없으면 그 편의 인장
+    const ei = (gender === "m" && (await firstImg(e.img))) || await firstImg(coverKey());   // 결말 CG 없으면 그 편의 인장
     ctx.save(); if (S.id === "ep1") ctx.filter = "grayscale(1) contrast(1.05)"; if (ei) cover(ctx, ei, 0, 0, W, AH); else fog(ctx, 0, 0, W, AH); ctx.restore();   /* 2편 CG 는 색 그대로 */
     const vg = ctx.createLinearGradient(0, AH * 0.45, 0, AH); vg.addColorStop(0, "rgba(18,19,20,0)"); vg.addColorStop(1, "rgba(18,19,20,1)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, AH);
     ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(60, 56, 470, 50); ctx.fillStyle = "#fff"; ctx.font = `600 22px ${MONO}`; ctx.fillText(`DOPA 기록보관소 · No. D-${S.code.slice(1)}-${caseNo}`, 78, 89);
