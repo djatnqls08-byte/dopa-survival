@@ -85,7 +85,7 @@
   const MAX = { hp: 3, san: 5, bat: 3 };
   function drawStats(hit = []) {
     const sc = S.scenes[i] || {}; const when = String(sc.tag || "").split("·")[0].trim();
-    $("playbar").innerHTML = `<span class="when">${ICON.moon}${when}</span>` + ["hp", "san", "bat"].map((k) => `<span class="pchip${hit.includes(k) ? " hit" : ""}${st[k] <= 1 ? " low" : ""}" aria-label="${LABEL[k]} ${st[k]}">${ICON[k]}${LABEL[k]} ${st[k]}</span>`).join("");
+    $("playbar").innerHTML = (photoUrl ? `<span class="me" style="background-image:url(${photoUrl})" title="${esc(name)}"></span>` : "") + `<span class="when">${ICON.moon}${when}</span>` + ["hp", "san", "bat"].map((k) => `<span class="pchip${hit.includes(k) ? " hit" : ""}${st[k] <= 1 ? " low" : ""}" aria-label="${LABEL[k]} ${st[k]}">${ICON[k]}${LABEL[k]} ${st[k]}</span>`).join("");
   }
 
   // ── 이야기 기록 (위로 계속 쌓임) ──
@@ -144,7 +144,9 @@
       else ax[k] = (ax[k] || 0) + v;
     });
     drawStats(hit.filter((k) => (c.fx[k] || 0) < 0));
-    const mine = document.createElement("p"); mine.className = "mine"; mine.textContent = fill(c.t); log().appendChild(mine);
+    const mine = document.createElement("p"); mine.className = "mine"; log().appendChild(mine);
+    if (photoUrl) { const av = document.createElement("span"); av.className = "av"; av.style.backgroundImage = `url(${photoUrl})`; mine.appendChild(av); }   /* 내 선택 줄 앞에 내 캐릭터 사진 */
+    mine.appendChild(document.createTextNode(fill(c.t)));
     const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없어요</span><span>${path.length}턴</span>`; log().appendChild(meta);
     const p = document.createElement("p"); p.textContent = brk(fill(c.r)); log().appendChild(p);
     const add = [mine, p];
@@ -198,8 +200,19 @@
   // ── 결말 기록 (1080×1350) ──
   const loadImg = (src) => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; });
   async function firstImg(key) { for (const x of ["webp", "jpg", "png"]) { try { return await loadImg(`img/${key}.${x}`); } catch (e) {} } return null; }
-  function wrap(ctx, text, maxW) { const out = []; let line = ""; for (const ch of Array.from(text)) { const t = line + ch; if (ctx.measureText(t).width > maxW && line) { out.push(line); line = ch.trim() ? ch : ""; } else line = t; } if (line) out.push(line); return out; }
-  function cover(ctx, im, x, y, w, h) { const r = Math.max(w / im.width, h / im.height); const sw = w / r, sh = h / r; ctx.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, x, y, w, h); }
+  // 카드 글 줄바꿈: 띄어쓰기 단위(단어 안 끊김 · 10/22 자기야) · 한 단어가 한 줄보다 길 때만 글자 단위
+  function wrap(ctx, text, maxW) {
+    const out = []; let line = "";
+    for (const w of String(text).split(" ")) {
+      const t = line ? line + " " + w : w;
+      if (ctx.measureText(t).width <= maxW) { line = t; continue; }
+      if (line) out.push(line);
+      if (ctx.measureText(w).width <= maxW) { line = w; continue; }
+      line = ""; for (const ch of Array.from(w)) { if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch; } else line += ch; }
+    }
+    if (line) out.push(line); return out;
+  }
+  function cover(ctx, im, x, y, w, h) { const r = Math.max(w / im.width, h / im.height); const sw = w / r, sh = h / r; ctx.drawImage(im, (im.width - sw) / 2, im.height > im.width * 1.1 ? Math.min(im.height * 0.03, im.height - sh) : (im.height - sh) / 2, sw, sh, x, y, w, h); }   /* 세로 그림은 위(얼굴) 기준 */
   function fog(ctx, x, y, w, h) {
     const g = ctx.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, "#3a3b3f"); g.addColorStop(0.6, "#232427"); g.addColorStop(1, "#121314"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h);   // 화면 안개와 같은 어두운 톤
     const r = ctx.createRadialGradient(x + w / 2, y + h * 0.62, 0, x + w / 2, y + h * 0.62, w * 0.5); r.addColorStop(0, "rgba(255,255,255,.22)"); r.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = r; ctx.fillRect(x, y, w, h);
@@ -242,9 +255,14 @@
     ctx.fillStyle = "#D9FF3F"; ctx.font = `600 24px ${SANS}`; ctx.fillText(`남은 상태  체력 ${st.hp} · 정신 ${st.san} · 배터리 ${st.bat}  ·  선택 ${path.length}번`, 70, H - 170);
     // 바닥
     ctx.fillStyle = "#1B1C1E"; ctx.fillRect(0, H - 130, W, 130); ctx.fillStyle = "#F0185E"; ctx.fillRect(0, H - 130, W, 4);
-    ctx.fillStyle = "#f1eee7"; ctx.font = `700 28px ${SANS}`; ctx.fillText(`${S.title} · 내 캐릭터로 해 보기`, 70, H - 74);
-    ctx.font = `400 22px ${SANS}`; ctx.fillStyle = "#9A9DA2"; ctx.fillText(`설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈 · 추천 괴담 〈${e.rec}〉`, 70, H - 38);
-    try { const logo = await loadImg("logo.svg"); ctx.drawImage(logo, W - 70 - 56, H - 102, 56, 56); } catch (err) {}
-    ctx.textAlign = "right"; ctx.font = `600 22px ${MONO}`; ctx.fillStyle = "#f1eee7"; ctx.fillText("@DOPA_studio", W - 140, H - 66); ctx.textAlign = "left";
+    // 바닥 띠 (10/22 정리): 왼쪽 = 제목·한 줄 / 오른쪽 = @아이디 + 로고, 띠 세로 가운데에 맞춤 · 왼쪽 글은 오른쪽 묶음 앞에서 끊김
+    const BY = H - 130, CY = BY + 65, LW = 52, lx = W - 70 - LW;
+    ctx.textAlign = "right"; ctx.font = `600 22px ${MONO}`; ctx.fillStyle = "#f1eee7"; ctx.textBaseline = "middle"; ctx.fillText("@DOPA_studio", lx - 16, CY); const hw = ctx.measureText("@DOPA_studio").width; ctx.textAlign = "left";
+    try { const logo = await loadImg("logo.svg"); ctx.save(); ctx.beginPath(); ctx.roundRect(lx, CY - LW / 2, LW, LW, 12); ctx.clip(); ctx.drawImage(logo, lx, CY - LW / 2, LW, LW); ctx.restore(); } catch (err) {}
+    const maxL = lx - 16 - hw - 40 - 70;
+    const fit = (t) => { let u = t; while (ctx.measureText(u).width > maxL && u.length > 1) u = u.slice(0, -1); return u === t ? t : u.trimEnd() + "…"; };
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "#f1eee7"; ctx.font = `700 28px ${SANS}`; ctx.fillText(fit(`${S.title} · 내 캐릭터로 해 보기`), 70, CY - 8);
+    ctx.font = `400 21px ${SANS}`; ctx.fillStyle = "#9A9DA2"; ctx.fillText(fit("설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈"), 70, CY + 28);
   }
 })();

@@ -104,6 +104,8 @@ button { font-family:inherit; }
 
 /* 도파 플레이 화면 */
 .playbar { position:sticky; top:0; z-index:6; display:flex; align-items:center; gap:6px; padding:max(10px, env(safe-area-inset-top,0px)) 0 10px; background:var(--bg); border-bottom:1px solid var(--border); margin:0 calc(-1 * max(16px, env(safe-area-inset-left,0px))); padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); overflow-x:auto; scrollbar-width:none; }
+.playbar .me { flex-shrink:0; width:30px; height:30px; border-radius:9px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); }
+.log .mine .av { display:inline-block; width:26px; height:26px; border-radius:8px; background:#1F2023 center/cover no-repeat; vertical-align:-7px; margin-right:9px; border:1px solid var(--border2); }
 .playbar .when { display:inline-flex; align-items:center; gap:6px; font-size:.92rem; font-weight:600; color:var(--muted); margin-right:4px; white-space:nowrap; }
 .playbar .when svg { width:18px; height:18px; }
 .pchip { display:inline-flex; align-items:center; gap:5px; height:30px; padding:0 10px; border-radius:9px; background:var(--panel2); font-size:.86rem; font-weight:700; color:#d8d8d6; white-space:nowrap; font-variant-numeric:tabular-nums; }
@@ -206,7 +208,7 @@ button { font-family:inherit; }
       <div class="prow"><div class="thumb" id="thumb"></div><button type="button" class="btn flex" id="pick">캐릭터 사진 넣기 (선택)</button><input type="file" id="file" accept="image/*" class="hide"></div>
     </div>
     <button type="button" class="btn main" id="start" disabled>순찰 시작</button>
-    <p class="fine">사진은 이 기기 안에서만 쓰여요 · 모든 기록은 픽션입니다</p>
+    <p class="fine">캐릭터 사진은 플레이 화면·결말 카드에 나와요 (이 기기 밖으로 안 나가요) · 모든 기록은 픽션입니다</p>
   </section>
 
   <!-- 플레이 (도파 플레이 화면 모양) -->
