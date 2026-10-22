@@ -14,6 +14,14 @@
   const sceneAt = (id) => S.scenes.findIndex((x) => x.id === id);
   const caseNo = String(Math.floor(1000 + Math.random() * 9000));
 
+  // ── 플레이 기록 (10/23 자기야 OK) — 이름·사진은 보내지 않고 숫자만 · 수파베이스 survival_events 에 넣기만 됨(읽기는 막힘)
+  const SB = "https://qytikqvngyvrszjygbbn.supabase.co", PK = "sb_publishable_h-nZS3_gVKpcLxgowjGK_Q_mr4bFXAp";   // 공개용(publishable) 키
+  const src = (() => { try { const f = new URLSearchParams(location.search).get("from"); if (f) return f.slice(0, 40); return document.referrer ? new URL(document.referrer).hostname.slice(0, 40) : "direct"; } catch (e) { return "?"; } })();
+  let sid = Math.random().toString(36).slice(2, 10);   // 한 판마다 새로
+  function track(ev, extra) {
+    try { fetch(`${SB}/rest/v1/survival_events`, { method: "POST", keepalive: true, headers: { apikey: PK, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(Object.assign({ ev, ep: S.id, g: gender, sid, src }, extra || {})) }).catch(() => {}); } catch (e) {}
+  }
+
   // 받침에 맞는 조사
   const batchim = (w) => { const c = String(w).trim().slice(-1).charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : /[lmnr]$/i.test(w); };
   // 00호 성별 (10/22): {그} = 그/그녀 · {{남|여}} 묘사 갈림 · 그림은 여성판(fimg·fcover)으로
@@ -73,6 +81,8 @@
   if (!EPS.length) EPS.push(window.STORY);
   if (EPS.length < 2) $("eps").classList.add("hide");
   pickEp(0);
+  track("view");
+  document.querySelector("#end .tb")?.addEventListener("click", () => track("tumblbug"));
 
   // ── 표지 ──
   $("name").addEventListener("input", (e) => { name = e.target.value.trim(); $("start").disabled = !name; });
@@ -82,6 +92,7 @@
     const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { photo = im; photoUrl = r.result; $("thumb").style.backgroundImage = `url(${r.result})`; }; im.src = r.result; }; r.readAsDataURL(f);
   });
   $("start").addEventListener("click", () => {
+    if (name) { sid = Math.random().toString(36).slice(2, 10); track("start", { photo: !!photo }); }
     if (!name) return;
     i = 0; step = 0; endKey = null; st = { ...S.start }; ax = { rule: 0, caution: 0, curious: 0, bond: 0, mirror: 0 }; path = [];
     $("log").innerHTML = "";
@@ -147,6 +158,7 @@
     }
   }
   function scene() {
+    track("scene", { scene: S.scenes[i].id });
     const sc = S.scenes[i]; step++;
     drawStats(); const mood = addMood(sc); requestAnimationFrame(() => mood.classList.add("in"));
     const ps = sc.text.map((t) => { const p = document.createElement("p"); p.textContent = brk(fill(t)); log().appendChild(p); return p; });
@@ -212,16 +224,17 @@
     setDock(null, { label: "기록 열람 ▸", go: () => finish(endKey) });
   }
   async function finish(forced) {
+    track("end", { ending: forced || endKey || null, scene: (S.scenes[i] || {}).id, steps: path.length, dead: st.hp <= 0 || st.san <= 0 });
     const res = judge(forced);
     $("play").classList.add("hide"); $("topbar").classList.remove("hide"); $("end").classList.remove("hide"); window.scrollTo({ top: 0 });
     await drawCard(res);
-    $("save").onclick = () => { const a = document.createElement("a"); a.download = `dopa-${S.code}-${caseNo}.png`; a.href = $("card").toDataURL("image/png"); a.click(); };
-    $("copy").onclick = async () => {
+    $("save").onclick = () => { track("save"); const a = document.createElement("a"); a.download = `dopa-${S.code}-${caseNo}.png`; a.href = $("card").toDataURL("image/png"); a.click(); };
+    $("copy").onclick = async () => { track("copy");
       const t = `[DOPA 기록보관소 · ${S.title}]\n요원 ${name} — ${res.e.title}${res.prob != null ? ` (생존 확률 ${res.prob}%)` : " (측정 불가)"}\n"${fill(res.e.last)}"\n\n#도파생존기록 #${S.title.replace(/\s/g, "")} #캐릭터`;
       try { await navigator.clipboard.writeText(t); $("toast").textContent = "복사했어요. 기록 이미지와 같이 올려 보세요."; } catch (e) { $("toast").textContent = t; }
     };
   }
-  $("again").addEventListener("click", () => { $("end").classList.add("hide"); $("cover").classList.remove("hide"); $("toast").textContent = ""; window.scrollTo({ top: 0 }); });
+  $("again").addEventListener("click", () => { track("again"); $("end").classList.add("hide"); $("cover").classList.remove("hide"); $("toast").textContent = ""; window.scrollTo({ top: 0 }); });
 
   // ── 결말 기록 (1080×1350) ──
   const loadImg = (src) => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; });
