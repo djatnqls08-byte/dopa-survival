@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>지하 4층 야간 순찰 · DOPA</title>
+<title>괴담 생존 기록 · DOPA</title>
 <meta name="description" content="내 캐릭터는 지하 4층에서 살아 나올 수 있을까? 선택형 텍스트 괴담 · DOPA 이상현상 기록보관소">
 <meta property="og:title" content="지하 4층 야간 순찰 · DOPA">
 <meta property="og:description" content="대답하지 말 것. 세지 말 것. 6시 전에는 나오지 말 것.">
@@ -132,6 +132,38 @@ button { font-family:inherit; }
 .inputbox .ibar .go2:disabled { background:var(--panel2); color:var(--muted); cursor:default; }
 .foottxt { text-align:center; font-size:.74rem; color:#6d6f73; margin-top:10px; }
 
+/* 기록 고르기 (1편·2편) */
+.eps { display:flex; gap:8px; padding-top:4px; }
+.ep { flex:1; min-width:0; text-align:left; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:11px 13px; color:var(--muted); cursor:pointer; display:flex; flex-direction:column; gap:3px; transition:border-color .15s, background .15s; }
+.ep b { font-family:'IBM Plex Mono',monospace; font-size:.7rem; font-weight:600; letter-spacing:.06em; color:var(--muted); }
+.ep span { font-size:.92rem; font-weight:800; color:#cfcfcd; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ep[aria-selected="true"] { border-color:var(--accent); background:rgba(240,24,94,.07); }
+.ep[aria-selected="true"] b { color:var(--accent); }
+.ep[aria-selected="true"] span { color:var(--text); }
+.ep .new { display:inline-block; margin-left:6px; font-family:'Pretendard Variable',sans-serif; font-size:.62rem; font-weight:800; color:#121314; background:var(--point); border-radius:6px; padding:1px 5px; vertical-align:1px; letter-spacing:0; }
+.kicker { margin:0 0 4px; font-size:.8rem; font-weight:700; color:var(--muted); }
+
+/* 분위기 그림: 실제 그림 대신 조명·안개 띠 (10/22 자기야 "그림은 분위기만") */
+.art.cold .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(125,211,252,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #030608, transparent 60%), linear-gradient(#1d2a33, #121a20 60%, #0b0f12); }
+.art.cold .fog, .art.red .fog { filter:none; }
+.art.cold img, .log .sceneart.cold img { filter:grayscale(.6) contrast(1.05) brightness(.9) hue-rotate(170deg); }
+.art.red .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(240,24,94,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #050506, transparent 60%), linear-gradient(#33242a, #201a1d 60%, #121314); }
+.mood { position:relative; height:118px; border-radius:14px; overflow:hidden; border:1px solid var(--border); scroll-margin-top:72px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px; padding:14px 16px; opacity:0; transition:opacity .8s; }
+.mood.in { opacity:1; }
+.mood::before { content:""; position:absolute; inset:0; background:var(--mbg); animation:breathe 7s ease-in-out infinite alternate; }
+.mood::after { content:""; position:absolute; inset:0; opacity:.45; mix-blend-mode:overlay; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.7'/></svg>"); }
+.mood > * { position:relative; z-index:1; }
+.mood .mt::before { content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--mline, var(--accent)); box-shadow:0 0 10px var(--mline, var(--accent)); margin-right:8px; vertical-align:1px; animation:blink 2.4s ease-in-out infinite; }
+@keyframes blink { 50% { opacity:.35; } }
+.mood .mt { font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600; letter-spacing:.06em; color:rgba(242,242,240,.7); }
+.mood .mp { font-family:'Pretendard Variable',sans-serif; font-size:1.05rem; font-weight:800; color:var(--text); letter-spacing:-.01em; text-shadow:0 1px 12px rgba(0,0,0,.6); }
+.mood img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:grayscale(1) contrast(1.08) brightness(.55); }
+@keyframes breathe { from { transform:scale(1); filter:brightness(.9); } to { transform:scale(1.06); filter:brightness(1.15); } }
+@media (prefers-reduced-motion: reduce) { .mood::before { animation:none; } }
+.opt .cost { display:inline-flex; align-items:center; gap:3px; margin-left:6px; font-family:'Pretendard Variable',sans-serif; font-size:.68rem; font-weight:800; color:var(--point); border:1px solid rgba(217,255,63,.35); border-radius:6px; padding:1px 5px; vertical-align:1px; white-space:nowrap; }
+.log .epi { color:#d8d6d2; }
+.log .endmark { text-align:center; font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.2em; color:var(--muted); }
+
 /* 결말 */
 .end { display:flex; flex-direction:column; gap:10px; padding-bottom:max(24px, env(safe-area-inset-bottom,0px)); }
 .end canvas { width:100%; height:auto; display:block; border-radius:16px; border:1px solid var(--border); }
@@ -150,18 +182,20 @@ button { font-family:inherit; }
 
   <!-- 표지 -->
   <section class="cover" id="cover">
-    <div class="art"><div class="fog"></div><img id="coverImg" alt="" class="hide"><div class="shade"></div>
-      <div class="tagrow"><span class="chip horror">괴담</span><span class="chip mono">B4 · 존재하지 않는 층</span><span class="chip">약 3분</span></div></div>
+    <div class="eps" id="eps" role="tablist" aria-label="기록 고르기"></div>
+    <div class="art" id="coverArt"><div class="fog"></div><img id="coverImg" alt="" class="hide"><div class="shade"></div>
+      <div class="tagrow" id="coverChips"></div></div>
     <div>
-      <h1>지하 4층 야간 순찰</h1>
+      <p class="kicker" id="coverKicker"></p>
+      <h1 id="coverTitle"></h1>
     </div>
-    <p class="lead">DOPA 이상현상 기록보관소의 신입 요원이 되어, 내 캐릭터로 하룻밤 순찰을 나가요. 선택에 따라 체력·정신·배터리가 줄고, 결말이 달라져요.</p>
+    <p class="lead" id="coverLead"></p>
     <div class="card">
       <p class="label">현장 규칙</p>
-      <ul class="rules"><li><b>01</b>대답하지 말 것</li><li><b>02</b>세지 말 것</li><li><b>03</b>6시 전에는 나오지 말 것</li></ul>
+      <ul class="rules" id="coverRules"></ul>
     </div>
     <div>
-      <p class="label">순찰 나갈 캐릭터</p>
+      <p class="label">들어갈 캐릭터</p>
       <input class="input" type="text" id="name" maxlength="12" placeholder="캐릭터 이름" autocomplete="off">
       <div class="prow"><div class="thumb" id="thumb"></div><button type="button" class="btn flex" id="pick">캐릭터 사진 넣기 (선택)</button><input type="file" id="file" accept="image/*" class="hide"></div>
     </div>
@@ -189,6 +223,7 @@ button { font-family:inherit; }
   </section>
 </div>
 <script src="data.js"></script>
+<script src="ep2.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

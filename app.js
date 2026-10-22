@@ -1,6 +1,13 @@
 // survival/app.js — 선택형 텍스트 RPG 엔진 (표지 → 장면·선택 → 결과 → 결말 기록 PNG)
 (() => {
-  const S = window.STORY;
+  // 기록(편) 목록 · 2편 결말은 1편의 등급·색·확률·추천 괴담을 물려받고 글만 바꿈
+  const EPS = [window.STORY];
+  if (window.STORY2) {
+    const e2 = window.STORY2, en = {};
+    Object.keys(window.STORY.endings).forEach((k) => { en[k] = { ...window.STORY.endings[k], ...(e2.endings[k] || {}) }; });
+    EPS.push({ ...e2, endings: en });
+  }
+  let S = EPS[0];
   const $ = (id) => document.getElementById(id);
   let name = "", photo = null, photoUrl = "", i = 0, st = {}, ax = {}, path = [];
   const caseNo = String(Math.floor(1000 + Math.random() * 9000));
@@ -16,7 +23,24 @@
     const next = () => { const u = tries.shift(); if (!u) return; const im = new Image(); im.onload = () => { imgEl.src = u; imgEl.classList.remove("hide"); }; im.onerror = next; im.src = u; };
     next();
   }
-  setArt($("coverImg"), "cover");   // 표지만 안개 배경 · 장면 그림은 있을 때만 이야기 사이에
+  // ── 표지: 기록 고르기 (1편·2편) ──
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function pickEp(n) {
+    S = EPS[n];
+    document.querySelectorAll(".ep").forEach((b, k) => b.setAttribute("aria-selected", String(k === n)));
+    $("coverArt").className = `art ${S.mood || ""}`;
+    $("coverChips").innerHTML = `<span class="chip horror">괴담</span>` + S.chips.map((c, k) => `<span class="chip${k === 0 ? " mono" : ""}">${esc(c)}</span>`).join("");
+    $("coverKicker").textContent = `DOPA 기록보관소 · 기록 ${String(n + 1).padStart(2, "0")}`;
+    $("coverTitle").textContent = S.title;
+    $("coverLead").textContent = S.lead;
+    $("coverRules").innerHTML = S.rules.map((r, k) => `<li><b>0${k + 1}</b><span>${esc(r)}</span></li>`).join("");
+    $("start").textContent = S.id === "ep2" ? "관측 시작" : "순찰 시작";
+    $("again").textContent = S.id === "ep2" ? "다른 캐릭터로 다시 관측" : "다른 캐릭터로 다시 순찰";
+    setArt($("coverImg"), S.id === "ep1" ? "cover" : `${S.id}_cover`);
+  }
+  $("eps").innerHTML = EPS.map((e, k) => `<button type="button" class="ep" role="tab" aria-selected="false"><b>기록 ${String(k + 1).padStart(2, "0")} · ${esc(e.code)}${k === EPS.length - 1 && k > 0 ? '<i class="new">NEW</i>' : ""}</b><span>${esc(e.title)}</span></button>`).join("");
+  document.querySelectorAll(".ep").forEach((b, k) => b.addEventListener("click", () => pickEp(k)));
+  pickEp(0);
 
   // ── 표지 ──
   $("name").addEventListener("input", (e) => { name = e.target.value.trim(); $("start").disabled = !name; });
@@ -51,11 +75,26 @@
   // ── 이야기 기록 (위로 계속 쌓임) ──
   const log = () => $("log");
   function reveal(ps) { ps.forEach((p, n) => setTimeout(() => p.classList.add("in"), 120 + n * 380)); }
-  function addArt(key) {   // 장면 그림이 있을 때만 (img/<key>.*)
-    const box = document.createElement("div"); box.className = "sceneart hide"; const im = document.createElement("img"); im.alt = ""; box.appendChild(im); log().appendChild(box);
-    const tries = ["webp", "jpg", "png"].map((x) => `img/${key}.${x}`);
-    const next = () => { const u = tries.shift(); if (!u) { box.remove(); return; } const t = new Image(); t.onload = () => { im.src = u; box.classList.remove("hide"); }; t.onerror = next; t.src = u; };
-    next();
+  // 장면 머리: 그림 대신 분위기 띠 (조명 색 + 안개 + 숨 쉬듯 일렁임 · 10/22 자기야 "그림은 분위기만") · img/<key>.* 가 있으면 어둡게 깔아 줌
+  const LIGHT = { red: "240,24,94", cold: "125,211,252", gas: "94,234,212", green: "52,211,153", amber: "251,191,36" };
+  function lightOf(sc) {
+    const t = sc.tag || "";
+    if (/비상|금이|05:15/.test(t)) return "red";
+    if (/03:00/.test(t)) return "gas";
+    if (/05:59|최종/.test(t)) return "green";
+    if (/의무|녹음|감시|회선|무전/.test(t)) return "amber";
+    return S.mood || "red";
+  }
+  function addMood(sc) {
+    const [when, ...rest] = String(sc.tag || "").split("·").map((x) => x.trim());
+    const c = LIGHT[lightOf(sc)], x = 20 + ((i * 37) % 60), y = 30 + ((i * 23) % 40);
+    const box = document.createElement("div"); box.className = "mood";
+    box.style.setProperty("--mbg", `radial-gradient(ellipse 45% 70% at ${x}% ${y}%, rgba(${c},.62), transparent 72%), radial-gradient(ellipse 90% 60% at ${100 - x}% 115%, rgba(${c},.26), transparent 70%), linear-gradient(90deg, transparent, rgba(${c},.10) ${x}%, transparent), linear-gradient(160deg, #1d1e22, #0b0c0e)`);
+    box.style.setProperty("--mline", `rgb(${c})`);
+    box.innerHTML = `<div class="mt">${esc(when)} · 기록 ${String(i + 1).padStart(2, "0")}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
+    log().appendChild(box);
+    if (sc.img) { const tries = ["webp", "jpg", "png"].map((e) => `img/${sc.img}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; box.prepend(im); }; t.onerror = next; t.src = u; }; next(); }
+    return box;
   }
   // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
   function setDock(choices, next) {
@@ -66,6 +105,7 @@
       choices.forEach((c, n) => {
         const b = document.createElement("button"); b.type = "button"; b.className = "opt";
         b.innerHTML = `<span class="n">${n + 1}</span><span></span>`; b.querySelectorAll("span")[1].textContent = fill(c.t);
+        if (c.need === "bat") { const k = document.createElement("i"); k.className = "cost"; k.textContent = "배터리 −1"; b.querySelectorAll("span")[1].appendChild(k); }
         if (c.need === "bat" && st.bat <= 0) { b.disabled = true; const sm = document.createElement("small"); sm.textContent = "배터리가 없다"; b.querySelectorAll("span")[1].appendChild(sm); }
         b.addEventListener("click", () => choose(c)); sg.appendChild(b);
       });
@@ -75,10 +115,10 @@
   }
   function scene() {
     const sc = S.scenes[i];
-    drawStats(); if (sc.img) addArt(sc.img);
+    drawStats(); const mood = addMood(sc); requestAnimationFrame(() => mood.classList.add("in"));
     const ps = sc.text.map((t) => { const p = document.createElement("p"); p.textContent = fill(t); log().appendChild(p); return p; });
     reveal(ps); setDock(sc.choices);
-    if (i > 0) setTimeout(() => ps[0].scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    if (i > 0) setTimeout(() => mood.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
   function choose(c) {
     path.push(c.t);
@@ -98,7 +138,7 @@
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
     else if (i + 1 < S.scenes.length) setDock(null, { label: "계속 ▸", go: () => { i++; scene(); } });
-    else setDock(null, { label: "06:00 · 기록 열람 ▸", go: () => finish() });
+    else setDock(null, { label: "06:00 · 결말 ▸", go: () => epilogue() });
   }
 
   // ── 판정 ──
@@ -116,13 +156,22 @@
     if (e.prob) { const [lo, hi] = e.prob; const t = Math.max(0, Math.min(1, (s + 6) / 18)); prob = Math.round(lo + (hi - lo) * t); }
     return { key, e, prob };
   }
+  // 결말 후일담 (있는 편만) → 기록 열람
+  function epilogue() {
+    const res = judge();
+    if (!res.e.epi) return finish();
+    const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = fill(t); log().appendChild(p); return p; });
+    const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
+    reveal(add); setTimeout(() => add[0].scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    setDock(null, { label: "기록 열람 ▸", go: () => finish() });
+  }
   async function finish(forced) {
     const res = judge(forced);
     $("play").classList.add("hide"); $("topbar").classList.remove("hide"); $("end").classList.remove("hide"); window.scrollTo({ top: 0 });
     await drawCard(res);
-    $("save").onclick = () => { const a = document.createElement("a"); a.download = `dopa-B4-${caseNo}.png`; a.href = $("card").toDataURL("image/png"); a.click(); };
+    $("save").onclick = () => { const a = document.createElement("a"); a.download = `dopa-${S.code}-${caseNo}.png`; a.href = $("card").toDataURL("image/png"); a.click(); };
     $("copy").onclick = async () => {
-      const t = `[DOPA 기록보관소 · 지하 4층 야간 순찰]\n요원 ${name} — ${res.e.title}${res.prob != null ? ` (생존 확률 ${res.prob}%)` : " (측정 불가)"}\n"${fill(res.e.last)}"\n\n#도파생존기록 #지하4층 #캐릭터`;
+      const t = `[DOPA 기록보관소 · ${S.title}]\n요원 ${name} — ${res.e.title}${res.prob != null ? ` (생존 확률 ${res.prob}%)` : " (측정 불가)"}\n"${fill(res.e.last)}"\n\n#도파생존기록 #${S.title.replace(/\s/g, "")} #캐릭터`;
       try { await navigator.clipboard.writeText(t); $("toast").textContent = "복사했어요. 기록 이미지와 같이 올려 보세요."; } catch (e) { $("toast").textContent = t; }
     };
   }
@@ -147,7 +196,7 @@
     const ei = await firstImg(e.img);
     ctx.save(); ctx.filter = "grayscale(1) contrast(1.05)"; if (ei) cover(ctx, ei, 0, 0, W, AH); else fog(ctx, 0, 0, W, AH); ctx.restore();
     const vg = ctx.createLinearGradient(0, AH * 0.45, 0, AH); vg.addColorStop(0, "rgba(18,19,20,0)"); vg.addColorStop(1, "rgba(18,19,20,1)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, AH);
-    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(60, 56, 470, 50); ctx.fillStyle = "#fff"; ctx.font = `600 22px ${MONO}`; ctx.fillText(`DOPA 기록보관소 · No. D-4-${caseNo}`, 78, 89);
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(60, 56, 470, 50); ctx.fillStyle = "#fff"; ctx.font = `600 22px ${MONO}`; ctx.fillText(`DOPA 기록보관소 · No. D-${S.code.slice(1)}-${caseNo}`, 78, 89);
     if (photo) {
       const pw = 250, ph = 300, px = W - 60 - pw, py = 330;
       ctx.save(); ctx.translate(px + pw / 2, py + ph / 2); ctx.rotate(0.05); ctx.translate(-(px + pw / 2), -(py + ph / 2));
@@ -169,12 +218,13 @@
     ctx.font = `400 36px ${SERIF}`; ctx.fillStyle = "#E8E6E2";
     wrap(ctx, `“${fill(e.last)}”`, W - 140).slice(0, 4).forEach((l) => { ctx.fillText(l, 70, y); y += 60; });
     y += 6; ctx.font = `400 25px ${SANS}`; ctx.fillStyle = "#9A9DA2";
-    e.notes.slice(0, 2).forEach((n) => { let cx = 70; `· ${fill(n)}`.split(/(█+)/).forEach((part) => { if (!part) return; const w = ctx.measureText(part).width; if (/^█+$/.test(part)) { ctx.fillStyle = "#F2F2F0"; ctx.fillRect(cx, y - 22, w, 28); ctx.fillStyle = "#9A9DA2"; } else ctx.fillText(part, cx, y); cx += w; }); y += 40; });
+    const lim = H - 214;   // '남은 상태' 줄 위까지만
+    e.notes.slice(0, 2).forEach((n) => wrap(ctx, `· ${fill(n)}`, W - 140).forEach((ln, k) => { if (y > lim) return; let cx = k ? 92 : 70; ln.split(/(█+)/).forEach((part) => { if (!part) return; const w = ctx.measureText(part).width; if (/^█+$/.test(part)) { ctx.fillStyle = "#F2F2F0"; ctx.fillRect(cx, y - 22, w, 28); ctx.fillStyle = "#9A9DA2"; } else ctx.fillText(part, cx, y); cx += w; }); y += 36; }));
     // 남은 상태 (바닥 바로 위)
     ctx.fillStyle = "#D9FF3F"; ctx.font = `600 24px ${SANS}`; ctx.fillText(`남은 상태  체력 ${st.hp} · 정신 ${st.san} · 배터리 ${st.bat}  ·  선택 ${path.length}번`, 70, H - 170);
     // 바닥
     ctx.fillStyle = "#1B1C1E"; ctx.fillRect(0, H - 130, W, 130); ctx.fillStyle = "#F0185E"; ctx.fillRect(0, H - 130, W, 4);
-    ctx.fillStyle = "#f1eee7"; ctx.font = `700 28px ${SANS}`; ctx.fillText("지하 4층 야간 순찰 · 내 캐릭터로 해 보기", 70, H - 74);
+    ctx.fillStyle = "#f1eee7"; ctx.font = `700 28px ${SANS}`; ctx.fillText(`${S.title} · 내 캐릭터로 해 보기`, 70, H - 74);
     ctx.font = `400 22px ${SANS}`; ctx.fillStyle = "#9A9DA2"; ctx.fillText(`설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈 · 추천 괴담 〈${e.rec}〉`, 70, H - 38);
     try { const logo = await loadImg("logo.svg"); ctx.drawImage(logo, W - 70 - 56, H - 102, 56, 56); } catch (err) {}
     ctx.textAlign = "right"; ctx.font = `600 22px ${MONO}`; ctx.fillStyle = "#f1eee7"; ctx.fillText("@DOPA_studio", W - 140, H - 66); ctx.textAlign = "left";
