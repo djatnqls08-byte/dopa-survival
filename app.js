@@ -126,7 +126,7 @@
     box.innerHTML = `<div class="mt">${esc(when)} · ${sc.mark || `기록 ${String(step).padStart(2, "0")}`}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
     log().appendChild(box);
     const ik = sc.mark ? sc.img : imgKey(sc);
-    if (ik) { const tries = ["webp", "jpg", "png"].map((e) => `img/${ik}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
+    if (ik) { const tries = ["webp", "jpg", "png"].map((e) => `img/${ik}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const cr = S.crop && S.crop[ik]; if (cr) { im.style.transform = `scale(${cr[0]})`; im.style.transformOrigin = `${cr[1]}% ${cr[2]}%`; } const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
     return box;
   }
   // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
@@ -205,7 +205,7 @@
     const res = judge(endKey);
     endKey = res.key;
     if (!res.e.epi) return finish(endKey);
-    const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: gender === "m" ? res.e.img : null, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
+    const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: gender === "m" ? res.e.img : (S.fend && S.fend[res.key]) || null, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
     const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
     reveal(add); setTimeout(() => cg.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -250,7 +250,8 @@
     const SERIF = "'Gowun Batang', serif", MONO = "'IBM Plex Mono', monospace", SANS = "'Pretendard Variable', Pretendard, sans-serif";
     ctx.fillStyle = "#121314"; ctx.fillRect(0, 0, W, H);   // 도파 나이트 바탕
     // 위: 그림 (결말 그림 → 없으면 안개) + 캐릭터 사진(흑백 폴라로이드)
-    const ei = (gender === "m" && (await firstImg(e.img))) || await firstImg(coverKey());   // 결말 CG 없으면 그 편의 인장
+    const ek = gender === "m" ? e.img : S.fend && S.fend[Object.keys(S.endings).find((k) => S.endings[k] === e)];
+    const ei = (ek && (await firstImg(ek))) || await firstImg(coverKey());   // 결말 CG 없으면 그 편의 인장
     ctx.save(); if (S.id === "ep1") ctx.filter = "grayscale(1) contrast(1.05)"; if (ei) cover(ctx, ei, 0, 0, W, AH); else fog(ctx, 0, 0, W, AH); ctx.restore();   /* 2편 CG 는 색 그대로 */
     const vg = ctx.createLinearGradient(0, AH * 0.45, 0, AH); vg.addColorStop(0, "rgba(18,19,20,0)"); vg.addColorStop(1, "rgba(18,19,20,1)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, AH);
     ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(60, 56, 470, 50); ctx.fillStyle = "#fff"; ctx.font = `600 22px ${MONO}`; ctx.fillText(`DOPA 기록보관소 · No. D-${S.code.slice(1)}-${caseNo}`, 78, 89);
