@@ -3,109 +3,123 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>괴담 생존 적합성 평가 · DOPA 기록보관소</title>
-<meta name="description" content="내 자캐는 괴담에서 살아남을 수 있을까? 10개의 기록을 읽고 판정을 받아 보세요.">
-<meta property="og:title" content="괴담 생존 적합성 평가 · DOPA 기록보관소">
-<meta property="og:description" content="피험자: 당신의 자캐 · 판정 결과는 열람 등급 1까지만 공개됩니다">
+<title>지하 4층 야간 순찰 · DOPA 기록보관소</title>
+<meta name="description" content="내 캐릭터는 지하 4층에서 살아 나올 수 있을까? 선택형 텍스트 괴담 · DOPA 이상현상 기록보관소">
+<meta property="og:title" content="지하 4층 야간 순찰 · DOPA 기록보관소">
+<meta property="og:description" content="대답하지 말 것. 세지 말 것. 6시 전에는 나오지 말 것.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root { --bg:#0e0d10; --paper:#ebe5d6; --paper2:#dfd7c3; --ink:#1b1a1d; --muted:#6f6758; --red:#b3122b; --line:#c9bfa8; --pink:#ff2d78; }
-* { box-sizing:border-box; }
-html, body { margin:0; background:var(--bg); color:var(--ink); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
-body { min-height:100vh; display:flex; justify-content:center; padding-block:24px 48px; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); }
-.doc { width:100%; max-width:560px; background:var(--paper); border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,.6); position:relative; overflow:hidden; }
-.doc::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(0,0,0,.025) 0 1px, transparent 1px 3px); pointer-events:none; }
-.head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 22px 12px; border-bottom:2px solid var(--ink); font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.04em; word-break:keep-all; }
-.head .lv { white-space:nowrap; }
-.head b { display:block; font-size:.85rem; letter-spacing:.12em; }
-.head .lv { text-align:right; color:var(--red); font-weight:600; }
-.body { padding:22px; display:flex; flex-direction:column; gap:16px; position:relative; }
-h1 { margin:0; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:1.6rem; word-break:keep-all; line-height:1.3; letter-spacing:-.02em; text-wrap:balance; }
-.sub { margin:0; word-break:keep-all; color:var(--muted); font-size:.92rem; line-height:1.65; }
-.mono { font-family:'IBM Plex Mono',monospace; font-size:.74rem; letter-spacing:.08em; color:var(--muted); }
-.redact { display:inline-block; background:var(--ink); color:transparent; border-radius:1px; padding:0 .2em; line-height:1.2; user-select:none; }
-label.f { display:flex; flex-direction:column; gap:6px; font-weight:700; font-size:.88rem; }
-input[type=text] { font:inherit; font-size:1rem; padding:12px 14px; border:1.5px solid var(--ink); border-radius:4px; background:#f6f2e8; color:var(--ink); }
-.photo { display:flex; align-items:center; gap:12px; }
-.photo .thumb { width:64px; height:64px; border:1.5px dashed var(--muted); border-radius:4px; background:#f6f2e8 center/cover no-repeat; flex-shrink:0; filter:grayscale(1) contrast(1.1); }
-.photo button { font:inherit; font-size:.85rem; }
-.btn { font:inherit; font-weight:800; font-size:1rem; padding:14px 18px; border-radius:4px; border:2px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; letter-spacing:.02em; }
-.btn.ghost { background:transparent; color:var(--ink); }
-.btn.pink { background:var(--pink); border-color:var(--pink); color:#fff; }
-.btn:disabled { opacity:.4; cursor:default; }
-.site { font-family:'IBM Plex Mono',monospace; font-size:.74rem; letter-spacing:.06em; color:var(--red); font-weight:600; }
-.q { font-family:'Nanum Myeongjo',serif; font-size:1.12rem; line-height:1.75; margin:0; word-break:keep-all; }
-.choices { display:flex; flex-direction:column; gap:8px; }
-.choice { text-align:left; font:inherit; font-size:.97rem; line-height:1.5; padding:13px 14px; background:#f6f2e8; border:1.5px solid var(--line); border-radius:4px; color:var(--ink); cursor:pointer; display:flex; gap:10px; align-items:flex-start; word-break:keep-all; }
-.choice:hover { border-color:var(--ink); }
-.choice i { font-style:normal; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--muted); }
-.bar { height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
-.bar > div { height:100%; background:var(--red); transition:width .25s; }
-.stamp { position:absolute; right:18px; top:14px; transform:rotate(-12deg); border:3px solid var(--red); color:var(--red); font-family:'IBM Plex Mono',monospace; font-weight:600; padding:4px 10px; letter-spacing:.2em; font-size:.8rem; opacity:.8; }
-canvas { width:100%; height:auto; display:block; border-radius:4px; box-shadow:0 4px 16px rgba(0,0,0,.25); }
-.row { display:flex; gap:8px; flex-wrap:wrap; }
-.row .btn { flex:1 1 140px; }
-.foot { padding:14px 22px 18px; border-top:1px dashed var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); }
-.foot img { height:18px; display:block; }
+:root { --paper:#f1eee7; --ink:#1c1b1e; --muted:#7a746a; --line:#dcd6ca; --night:#151417; --night2:#222125; --red:#b3122b; --pink:#ff2d78; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { margin:0; background:#0b0a0c; color:var(--ink); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
+.app { max-width:480px; min-height:100vh; min-height:100dvh; margin:0 auto; background:var(--paper); position:relative; display:flex; flex-direction:column; overflow:hidden; }
+@media (min-width:520px) { body { padding-block:24px; } .app { min-height:calc(100dvh - 48px); border-radius:18px; box-shadow:0 30px 80px rgba(0,0,0,.6); } }
 .hide { display:none !important; }
-.fine { word-break:keep-all; font-size:.72rem; color:var(--muted); line-height:1.6; }
+
+/* 상태 바 */
+.stats { display:flex; justify-content:center; gap:26px; padding:12px 16px 8px; padding-top:max(12px, env(safe-area-inset-top,0px)); background:var(--paper); border-bottom:1px solid var(--line); }
+.stat { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:.68rem; color:var(--muted); font-weight:600; transition:transform .2s; }
+.stat svg { width:22px; height:22px; }
+.stat .pips { display:flex; gap:3px; }
+.stat .pip { width:7px; height:7px; border-radius:50%; border:1.2px solid var(--ink); }
+.stat .pip.on { background:var(--ink); }
+.stat.hit { animation:hit .5s; }
+@keyframes hit { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-4px); color:var(--red); } 75% { transform:translateX(4px); } }
+
+/* 그림 */
+.art { position:relative; aspect-ratio:4/3; background:#cfcbc2; overflow:hidden; flex-shrink:0; }
+.art img, .art .fog { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05) brightness(1.02); }
+.fog { background:
+  radial-gradient(ellipse 60% 45% at 50% 62%, rgba(255,255,255,.55), transparent 70%),
+  radial-gradient(ellipse 120% 80% at 50% 120%, #5a5650, transparent 60%),
+  linear-gradient(#e6e2da, #a9a399 70%, #6f6a62); }
+.fog::after { content:""; position:absolute; inset:0; opacity:.55; mix-blend-mode:multiply; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.art .vig { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.35)); pointer-events:none; }
+.art .tag { position:absolute; left:14px; bottom:12px; font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.06em; color:#fff; background:rgba(0,0,0,.55); padding:4px 8px; border-radius:3px; }
+
+/* 본문 */
+.story { flex:1; padding:22px 22px 18px; font-family:'Nanum Myeongjo',serif; font-size:1.04rem; line-height:1.95; word-break:keep-all; overflow-y:auto; }
+.story p { margin:0 0 14px; opacity:0; transform:translateY(6px); transition:opacity .5s, transform .5s; }
+.story p.in { opacity:1; transform:none; }
+.story p.result { color:#4a4540; font-style:italic; border-left:3px solid var(--ink); padding-left:12px; }
+.deltas { display:flex; gap:6px; flex-wrap:wrap; margin:-4px 0 6px; font-family:'Pretendard Variable',sans-serif; }
+.delta { font-size:.75rem; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--ink); color:#fff; }
+.delta.up { background:#2f7d4f; }
+
+/* 선택지 시트 */
+.sheet { background:var(--night); color:#eeeae3; border-radius:18px 18px 0 0; padding:16px 16px max(18px, env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:8px; }
+.sheet .hint { font-family:'IBM Plex Mono',monospace; font-size:.68rem; letter-spacing:.12em; color:#8d877d; text-align:center; margin-bottom:2px; }
+.opt { font:inherit; font-size:.98rem; line-height:1.45; text-align:left; color:#f3efe8; background:var(--night2); border:1px solid #34323a; border-radius:12px; padding:14px 14px; display:flex; gap:12px; align-items:flex-start; cursor:pointer; word-break:keep-all; transition:background .15s, border-color .15s; }
+.opt:hover { border-color:#6a6670; }
+.opt:active { background:#2c2b31; }
+.opt b { font-family:'IBM Plex Mono',monospace; color:#8d877d; font-weight:600; }
+.opt[disabled] { opacity:.35; cursor:default; }
+.opt small { display:block; color:#8d877d; font-size:.75rem; margin-top:2px; }
+.next { font:inherit; font-weight:800; font-size:1rem; padding:15px; border-radius:12px; border:none; background:#f3efe8; color:var(--night); cursor:pointer; }
+
+/* 표지 */
+.cover { flex:1; background:var(--night); color:#eeeae3; display:flex; flex-direction:column; }
+.cover .art { aspect-ratio:1/1; }
+.cover .inner { padding:22px 22px max(24px, env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:14px; }
+.org { font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.14em; color:#9b958a; }
+.cover h1 { margin:0; font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:2rem; line-height:1.25; letter-spacing:-.02em; }
+.rules { margin:0; padding:0; list-style:none; font-family:'Nanum Myeongjo',serif; font-size:.98rem; line-height:1.8; color:#d9d4cb; }
+.rules li::before { content:"— "; color:var(--red); }
+.cover input[type=text] { font:inherit; font-size:1rem; padding:14px; border-radius:12px; border:1px solid #3a3840; background:var(--night2); color:#f3efe8; }
+.cover input::placeholder { color:#77727a; }
+.prow { display:flex; align-items:center; gap:12px; }
+.thumb { width:52px; height:52px; border-radius:10px; border:1px dashed #55525a; background:var(--night2) center/cover no-repeat; filter:grayscale(1); flex-shrink:0; }
+.ghost { font:inherit; font-size:.88rem; font-weight:600; padding:12px 14px; border-radius:12px; border:1px solid #3a3840; background:none; color:#d9d4cb; cursor:pointer; flex:1; }
+.go { font:inherit; font-weight:800; font-size:1.05rem; padding:16px; border-radius:12px; border:none; background:#f3efe8; color:var(--night); cursor:pointer; }
+.go:disabled { opacity:.35; cursor:default; }
+.fine { font-size:.72rem; color:#77727a; line-height:1.6; margin:0; word-break:keep-all; }
+
+/* 결말 */
+.endv { flex:1; background:var(--night); color:#eeeae3; padding:18px 16px max(22px, env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:10px; }
+.endv canvas { width:100%; height:auto; border-radius:10px; display:block; }
+.endv .row { display:flex; gap:8px; }
+.endv .row > * { flex:1; }
+.pinkbtn { font:inherit; font-weight:800; font-size:.98rem; padding:15px; border-radius:12px; background:var(--pink); color:#fff; text-align:center; text-decoration:none; }
+.toast { text-align:center; font-size:.8rem; color:#9b958a; min-height:1em; }
 </style>
 </head>
 <body>
-<main class="doc">
-  <div class="head">
-    <div><b>DOPA 이상현상 기록보관소</b>생존 적합성 평가서 · 양식 D-4</div>
-    <div class="lv">열람 등급 1<br><span id="caseNo">No. ----</span></div>
-  </div>
+<div class="app">
 
-  <!-- 1. 표지 -->
-  <section class="body" id="intro">
-    <div class="stamp">CLASSIFIED</div>
-    <span class="mono">▌ 피험자 등록</span>
-    <h1>당신의 자캐는<br>괴담에서 살아남을 수 있을까</h1>
-    <p class="sub">기록보관소가 수집한 열 개의 현장 기록을 읽고, 피험자라면 어떻게 할지 고르세요. 판정 결과는 <span class="redact">열람등급3</span> 기록으로 남습니다.</p>
-    <label class="f">피험자 이름 (자캐 이름)<input type="text" id="name" maxlength="14" placeholder="예: 윤세라" autocomplete="off"></label>
-    <div class="photo">
-      <div class="thumb" id="thumb"></div>
-      <div class="row" style="flex:1">
-        <button type="button" class="btn ghost" id="pick">사진 넣기 (선택)</button>
-      </div>
-      <input type="file" id="file" accept="image/*" class="hide">
+  <!-- 표지 -->
+  <section class="cover" id="cover">
+    <div class="art"><div class="fog"></div><img id="coverImg" alt="" class="hide"><div class="vig"></div><span class="tag">B4 · 존재하지 않는 층</span></div>
+    <div class="inner">
+      <span class="org">DOPA 이상현상 기록보관소 · 생존 기록 D-4</span>
+      <h1>지하 4층<br>야간 순찰</h1>
+      <ul class="rules"><li>대답하지 말 것</li><li>세지 말 것</li><li>6시 전에는 나오지 말 것</li></ul>
+      <input type="text" id="name" maxlength="12" placeholder="순찰 나갈 캐릭터 이름" autocomplete="off">
+      <div class="prow"><div class="thumb" id="thumb"></div><button type="button" class="ghost" id="pick">캐릭터 사진 넣기 (선택)</button><input type="file" id="file" accept="image/*" class="hide"></div>
+      <button type="button" class="go" id="start" disabled>순찰 시작</button>
+      <p class="fine">사진은 이 기기 안에서만 쓰여요. 모든 기록은 픽션입니다. · 약 3분</p>
     </div>
-    <button type="button" class="btn" id="start" disabled>평가 시작</button>
-    <p class="fine">사진은 이 기기 안에서만 쓰이고 어디에도 올라가지 않아요. 모든 기록은 픽션입니다.</p>
   </section>
 
-  <!-- 2. 질문 -->
-  <section class="body hide" id="quiz">
-    <div class="bar"><div id="prog" style="width:0%"></div></div>
-    <span class="mono" id="qNo">기록 01 / 10</span>
-    <span class="site" id="qSite"></span>
-    <p class="q" id="qText"></p>
-    <div class="choices" id="qChoices"></div>
+  <!-- 플레이 -->
+  <section id="play" class="hide" style="flex:1;display:flex;flex-direction:column;min-height:0">
+    <div class="stats" id="stats"></div>
+    <div class="art"><div class="fog"></div><img id="sceneImg" alt="" class="hide"><div class="vig"></div><span class="tag" id="tag"></span></div>
+    <div class="story" id="story"></div>
+    <div class="sheet" id="sheet"></div>
   </section>
 
-  <!-- 3. 결과 -->
-  <section class="body hide" id="result">
-    <span class="mono">▌ 판정 결과</span>
+  <!-- 결말 -->
+  <section class="endv hide" id="end">
     <canvas id="card" width="1080" height="1350"></canvas>
-    <div class="row">
-      <button type="button" class="btn" id="save">판정서 저장 (PNG)</button>
-      <button type="button" class="btn ghost" id="copy">결과 문구 복사</button>
-    </div>
-    <a class="btn pink" id="tumblbug" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">이런 괴담을 내 자캐로 직접 플레이하기 → 텀블벅 알림 신청</a>
-    <button type="button" class="btn ghost" id="again">다른 피험자로 다시 하기</button>
-    <p class="fine" id="copied"></p>
+    <div class="row"><button type="button" class="go" id="save">기록 저장</button><button type="button" class="ghost" id="copy">결과 문구 복사</button></div>
+    <a class="pinkbtn" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">이런 괴담을 내 캐릭터로 끝까지 플레이하기 → 텀블벅 알림 신청</a>
+    <button type="button" class="ghost" id="again">다른 캐릭터로 다시 순찰</button>
+    <div class="toast" id="toast"></div>
   </section>
-
-  <div class="foot">
-    <span>설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈</span>
-    <img src="logo.svg" alt="DOPA">
-  </div>
-</main>
+</div>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
