@@ -134,6 +134,7 @@
     const add = [mine, p];
     if (deltas.length) { const d = document.createElement("div"); d.className = "deltas"; d.innerHTML = deltas.map(([k, v]) => `<span class="delta${v > 0 ? " up" : ""}">${LABEL[k]} ${v > 0 ? "+" : "−"}${Math.abs(v)}</span>`).join(""); log().appendChild(d); }
     const dead = st.hp <= 0 ? "hp" : st.san <= 0 ? "san" : null;
+    if (dead && S.deathImg) { const cg = addMood({ tag: `${String(S.scenes[i].tag).split("·")[0].trim()} · 기록 중단`, img: S.deathImg, mark: "중단" }); requestAnimationFrame(() => cg.classList.add("in")); }   /* 체력·정신 0 CG (2편) */
     if (dead) { const q = document.createElement("p"); q.textContent = fill(S.deaths[dead]); log().appendChild(q); add.push(q); }
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
