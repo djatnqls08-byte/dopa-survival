@@ -17,7 +17,7 @@
   // 받침에 맞는 조사
   const batchim = (w) => { const c = String(w).trim().slice(-1).charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : /[lmnr]$/i.test(w); };
   // 00호 성별 (10/22): {그} = 그/그녀 · {{남|여}} 묘사 갈림 · 그림은 여성판(fimg·fcover)으로
-  let gender = "m";
+  let gender = window.PRESET_GENDER === "f" ? "f" : "m";   // her.html(여성판 링크)은 그녀로 시작
   const gtxt = (t) => String(t).replace(/\{그\}/g, gender === "f" ? "그녀" : "그").replace(/\{\{([^|{}]*)\|([^{}]*)\}\}/g, (m, a, b) => (gender === "f" ? b : a));
   const coverKey = () => (gender === "f" && S.fcover) || S.cover || "cover";
   const imgKey = (sc) => (gender === "f" && S.fimg ? S.fimg[sc.id] || null : sc.img);

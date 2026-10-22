@@ -12,7 +12,8 @@
   const SANS = "'Pretendard Variable', sans-serif", SERIF = "'Gowun Batang', serif", MONO = "'IBM Plex Mono', monospace";
   x.fillStyle = "#121314"; x.fillRect(0, 0, W, H);
   // 오른쪽: 00호 인장 (세로 그림 → 오른쪽 절반에 맞춰 자르고 왼쪽으로 어둡게 녹임)
-  const im = new Image(); im.src = "img/ep2_seal.webp"; await im.decode();
+  const F = location.search.includes("g=f");   // ?g=f = 여성판(그녀) 카드 → og-f.png
+  const im = new Image(); im.src = F ? "img/ep2f_seal.webp" : "img/ep2_seal.webp"; await im.decode();
   const bx = 600, bw = W - bx, r = Math.max(bw / im.width, H / im.height), sw = bw / r, sh = H / r;
   x.drawImage(im, (im.width - sw) / 2, im.height * 0.06, sw, sh, bx, 0, bw, H);
   const g = x.createLinearGradient(bx, 0, bx + 260, 0); g.addColorStop(0, "#121314"); g.addColorStop(1, "rgba(18,19,20,0)"); x.fillStyle = g; x.fillRect(bx, 0, 260, H);
@@ -20,8 +21,8 @@
   x.fillStyle = "#a78bfa"; x.strokeStyle = "rgba(167,139,250,.5)"; x.lineWidth = 2; x.beginPath(); x.roundRect(80, 86, 92, 40, 20); x.stroke(); x.font = `700 22px ${SANS}`; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText("괴담", 126, 107); x.textAlign = "left"; x.textBaseline = "alphabetic";   /* 뱃지 글자 가운데 (10/22) */
   x.fillStyle = "#9A9DA2"; x.font = `600 22px ${MONO}`; x.fillText("DOPA 기록보관소 · B5", 190, 114);
   x.fillStyle = "#F2F2F0"; x.font = `800 74px ${SANS}`; x.fillText("특수 격리실", 80, 228); x.fillText("00호", 80, 314);
-  ["대답하지 말 것", "다가가지 말 것", "03:00, 모니터를 볼 것"].forEach((t, i) => { x.fillStyle = "#F0185E"; x.font = `600 22px ${MONO}`; x.fillText(`0${i + 1}`, 80, 392 + i * 46); x.fillStyle = "#cfcfcd"; x.font = `400 30px ${SERIF}`; x.fillText(t, 124, 394 + i * 46); });
-  x.fillStyle = "#D9FF3F"; x.font = `700 26px ${SANS}`; x.fillText("그는 내 캐릭터의 이름을 기억한다.", 80, 572);
+  ["대답하지 말 것", "다가가지 말 것", "03:00, 모니터를 볼 것"].forEach((t, i) => { x.fillStyle = "#F0185E"; x.font = `600 22px ${MONO}`; x.fillText(`0${i + 1}`, 80, 378 + i * 44); x.fillStyle = "#cfcfcd"; x.font = `400 30px ${SERIF}`; x.fillText(t, 124, 380 + i * 44); });
+  x.fillStyle = "#D9FF3F"; x.font = `700 26px ${SANS}`; x.fillText(F ? "그녀는 내 캐릭터의 이름을 기억한다." : "그는 내 캐릭터의 이름을 기억한다.", 80, 526);   /* X 카드는 아래쪽에 제목 알약이 덮어서 위로 올림 */
   try { const lg = new Image(); lg.src = "logo.svg"; await lg.decode(); x.drawImage(lg, W - 80 - 56, 534, 56, 56); } catch (e) {}
   const d = c.toDataURL("image/png"); await fetch("/__save", { method: "POST", body: d }); document.title = "saved";
 })();

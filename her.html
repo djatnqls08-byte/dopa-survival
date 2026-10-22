@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>특수 격리실 00호 · 그녀 · DOPA</title>
+<meta name="description" content="유리 너머의 그녀는 너무 다정하고, 수칙은 서로 부딪쳐요. 내 캐릭터는 지하 5층의 밤을 버틸 수 있을까?">
+<meta property="og:title" content="특수 격리실 00호 · 그녀 · DOPA">
+<meta property="og:description" content="대답하지 말 것. 다가가지 말 것. 그래도 그녀는 네 이름을 안다.">
+<meta name="theme-color" content="#121314">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dopa-survival.vercel.app/her">
+<meta property="og:image" content="https://dopa-survival.vercel.app/og-f.png?v=1">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@DOPA_studio">
+<meta name="twitter:title" content="특수 격리실 00호 · 그녀 · DOPA">
+<meta name="twitter:description" content="유리 너머의 그녀는 너무 다정하고, 수칙은 서로 부딪쳐요. 내 캐릭터는 지하 5층의 밤을 버틸 수 있을까?">
+<meta name="twitter:image" content="https://dopa-survival.vercel.app/og-f.png?v=1">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* 도파 네온(나이트) 테마와 같은 색 · lib/themes.js dopa.dark */
+:root { --bg:#121314; --panel:#1B1C1E; --panel2:#222326; --border:#2A2C2F; --border2:#3A3D41; --text:#F2F2F0; --muted:#9A9DA2; --accent:#F0185E; --glow:rgba(240,24,94,.25); --point:#D9FF3F; --horror:#a78bfa; --danger:#F43F5E; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
+body { min-height:100dvh; }
+.app { max-width:480px; margin:0 auto; min-height:100dvh; display:flex; flex-direction:column; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); }
+.hide { display:none !important; }
+button { font-family:inherit; }
+
+/* 앱 바 */
+.topbar { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:max(12px, env(safe-area-inset-top,0px)) 0 12px; background:linear-gradient(var(--bg) 70%, rgba(18,19,20,0)); }
+.brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:.95rem; letter-spacing:-.01em; }
+.brand img { width:26px; height:26px; border-radius:8px; display:block; }
+.brand span { color:var(--muted); font-weight:600; }
+
+/* 칩 */
+.chip { display:inline-flex; align-items:center; gap:5px; height:26px; padding:0 10px; border-radius:999px; font-size:.76rem; font-weight:700; border:1px solid var(--border); background:var(--panel2); color:var(--muted); white-space:nowrap; }
+.chip.horror { color:var(--horror); border-color:rgba(167,139,250,.45); background:rgba(167,139,250,.08); }
+.chip.mono { font-family:'IBM Plex Mono',monospace; font-weight:600; letter-spacing:.03em; }
+
+/* 상태 */
+.stats { display:flex; gap:6px; }
+.stat { display:inline-flex; align-items:center; gap:5px; height:30px; padding:0 10px; border-radius:999px; background:var(--panel); border:1px solid var(--border); font-size:.82rem; font-weight:800; font-variant-numeric:tabular-nums; transition:border-color .2s, color .2s; }
+.stat svg { width:15px; height:15px; color:var(--muted); }
+.stat.low { color:var(--danger); border-color:rgba(244,63,94,.5); }
+.stat.low svg { color:var(--danger); }
+.stat.hit { animation:hit .5s; }
+@keyframes hit { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-4px); } 75% { transform:translateX(4px); } }
+
+/* 그림 카드 */
+.art { position:relative; aspect-ratio:4/3; border-radius:16px; overflow:hidden; background:#2a2b2e; border:1px solid var(--border); flex-shrink:0; }
+.art img, .art .fog { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.08) brightness(.92); }
+.fog { background:radial-gradient(ellipse 55% 40% at 50% 64%, rgba(255,255,255,.22), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #050506, transparent 60%), linear-gradient(#3a3b3f, #232427 60%, #121314); }
+.fog::after { content:""; position:absolute; inset:0; opacity:.5; mix-blend-mode:overlay; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.7'/></svg>"); }
+.art .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(18,19,20,.85)); pointer-events:none; }
+.art .tagrow { position:absolute; left:12px; right:12px; bottom:12px; display:flex; gap:6px; flex-wrap:wrap; }
+.art .tagrow .chip { background:rgba(18,19,20,.7); backdrop-filter:blur(6px); }
+
+/* 표지 */
+.cover { display:flex; flex-direction:column; gap:16px; padding-bottom:max(24px, env(safe-area-inset-bottom,0px)); }
+.cover .art { aspect-ratio:1/1; }
+.cover h1 { margin:0; font-size:1.9rem; font-weight:800; letter-spacing:-.03em; line-height:1.2; }
+.cover .lead { margin:-6px 0 0; color:var(--muted); font-size:.92rem; line-height:1.6; word-break:keep-all; }
+.card { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
+.rules { word-break:keep-all; line-height:1.55; margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; font-family:'Gowun Batang',serif; font-size:1rem; }
+.rules li { display:flex; gap:10px; align-items:baseline; }
+.rules li b { font-family:'IBM Plex Mono',monospace; font-size:.75rem; color:var(--accent); }
+.label { font-size:.78rem; font-weight:700; color:var(--muted); margin:0 0 6px; }
+.input { width:100%; font:inherit; font-size:1rem; padding:14px; border-radius:12px; border:1px solid var(--border); background:#1F2023; color:var(--text); outline:none; }
+.input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
+.prow { display:flex; gap:10px; align-items:center; margin-top:10px; }
+.thumb { width:48px; height:48px; border-radius:12px; border:1px dashed var(--border2); background:#1F2023 center/cover no-repeat; filter:grayscale(1); flex-shrink:0; }
+.btn { font-size:.95rem; font-weight:700; padding:13px 16px; border-radius:12px; border:1px solid var(--border); background:var(--panel2); color:var(--text); cursor:pointer; }
+.btn.flex { flex:1; }
+.btn.main { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:800; font-size:1.02rem; padding:15px; box-shadow:0 6px 20px var(--glow); }
+.btn.main:disabled { opacity:.35; box-shadow:none; cursor:default; }
+.btn.point { background:var(--point); border-color:var(--point); color:#121314; font-weight:800; }
+.fine { margin:0; font-size:.74rem; color:var(--muted); line-height:1.6; word-break:keep-all; text-align:center; }
+
+/* 플레이 */
+.play { display:flex; flex-direction:column; gap:14px; padding-bottom:max(22px, env(safe-area-inset-bottom,0px)); }
+.prog { height:3px; border-radius:2px; background:var(--border); overflow:hidden; }
+.prog > div { height:100%; background:var(--accent); transition:width .3s; }
+.story { font-family:'Gowun Batang',serif; font-size:1.04rem; line-height:1.95; word-break:keep-all; display:flex; flex-direction:column; gap:12px; }
+.story p { margin:0; opacity:0; transform:translateY(6px); transition:opacity .5s, transform .5s; }
+.story p.in { opacity:1; transform:none; }
+.story p.result { color:#d8d6d2; background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:10px; padding:12px 14px; font-size:.98rem; }
+.deltas { display:flex; gap:6px; flex-wrap:wrap; }
+.delta { font-family:'Pretendard Variable',sans-serif; font-size:.74rem; font-weight:800; padding:4px 9px; border-radius:999px; background:rgba(244,63,94,.12); color:var(--danger); border:1px solid rgba(244,63,94,.35); }
+.delta.up { background:rgba(217,255,63,.1); color:var(--point); border-color:rgba(217,255,63,.35); }
+.choices { display:flex; flex-direction:column; gap:8px; }
+.choices .hint { font-size:.76rem; font-weight:700; color:var(--muted); margin-bottom:2px; }
+.opt { text-align:left; font-size:.97rem; line-height:1.45; color:var(--text); background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; gap:12px; align-items:center; cursor:pointer; word-break:keep-all; transition:border-color .15s, background .15s, transform .1s; }
+.opt:hover { border-color:var(--border2); background:var(--panel2); }
+.opt:active { transform:scale(.99); }
+.opt .n { flex-shrink:0; width:26px; height:26px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; background:rgba(240,24,94,.12); color:var(--accent); font-weight:800; font-size:.82rem; }
+.opt[disabled] { opacity:.35; cursor:default; }
+.opt small { display:block; color:var(--muted); font-size:.74rem; margin-top:2px; }
+
+/* 도파 플레이 화면 */
+.playbar { position:sticky; top:0; z-index:6; display:flex; align-items:center; gap:6px; padding:max(10px, env(safe-area-inset-top,0px)) 0 10px; background:var(--bg); border-bottom:1px solid var(--border); margin:0 calc(-1 * max(16px, env(safe-area-inset-left,0px))); padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); overflow-x:auto; scrollbar-width:none; }
+.playbar .me { flex-shrink:0; width:36px; height:36px; border-radius:11px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); }
+.log .mine.has-av { display:flex; gap:14px; align-items:flex-start; }
+.log .mine .av { flex-shrink:0; width:64px; height:64px; border-radius:16px; background:#1F2023 center/cover no-repeat; border:1px solid var(--border2); box-shadow:0 4px 14px rgba(0,0,0,.35); }
+.log .mine .say { display:flex; flex-direction:column; gap:4px; min-width:0; padding-top:4px; }
+.log .mine .say b { font-size:.82rem; font-weight:800; color:var(--accent); }
+.playbar .when { display:inline-flex; align-items:center; gap:6px; font-size:.92rem; font-weight:600; color:var(--muted); margin-right:4px; white-space:nowrap; }
+.playbar .when svg { width:18px; height:18px; }
+.pchip { display:inline-flex; align-items:center; gap:5px; height:30px; padding:0 10px; border-radius:9px; background:var(--panel2); font-size:.86rem; font-weight:700; color:#d8d8d6; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.pchip svg { width:15px; height:15px; color:var(--muted); }
+.pchip.low { color:var(--danger); } .pchip.low svg { color:var(--danger); }
+.pchip.hit { animation:hit .5s; }
+.log { font-family:'Gowun Batang',serif; font-size:1.06rem; line-height:1.95; word-break:keep-all; padding:22px 0 0; display:flex; flex-direction:column; gap:22px; }
+.log p, .log .sceneart { scroll-margin-top:72px; }
+.log p { white-space:pre-line; margin:0; opacity:0; transform:translateY(6px); transition:opacity .5s, transform .5s; }
+.log p.in { opacity:1; transform:none; }
+.log .sceneart { border-radius:14px; overflow:hidden; border:1px solid var(--border); aspect-ratio:4/3; }
+.log .sceneart img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(1) contrast(1.08) brightness(.92); }
+.log .mine { border-left:3px solid var(--accent); padding:2px 0 2px 16px; color:#e8e8e6; font-family:'Pretendard Variable',sans-serif; font-size:1rem; line-height:1.75; }
+.log .meta { display:flex; justify-content:space-between; align-items:center; font-family:'Pretendard Variable',sans-serif; font-size:.86rem; color:var(--muted); }
+.log .meta span { display:inline-flex; align-items:center; gap:6px; }
+.log .deltas { margin-top:-12px; }
+.dock { position:sticky; bottom:0; z-index:6; padding:10px 0 max(10px, env(safe-area-inset-bottom,0px)); background:linear-gradient(rgba(18,19,20,0), var(--bg) 22%); margin-top:18px; }
+.sugg { display:flex; gap:14px; overflow-x:auto; scrollbar-width:none; padding:6px 2px 12px; }
+.sugg button { flex-shrink:0; max-width:78%; background:none; border:none; border-bottom:1px solid var(--border2); color:#cfcfcd; font-size:.95rem; padding:6px 4px 8px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sugg button:hover { color:var(--text); border-color:var(--accent); }
+.sugg button[disabled] { opacity:.35; cursor:default; }
+.inputbox { background:var(--panel); border:1px solid var(--border); border-radius:20px; padding:14px 16px 12px; display:flex; flex-direction:column; gap:12px; }
+.inputbox .ph { color:#77797d; font-size:1rem; }
+.inputbox .ibar { display:flex; align-items:center; gap:8px; font-size:.9rem; color:var(--muted); }
+.inputbox .ibar b { color:var(--text); }
+.inputbox .ibar .go2 { margin-left:auto; width:40px; height:40px; border-radius:50%; border:none; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+.inputbox .ibar .go2:disabled { background:var(--panel2); color:var(--muted); cursor:default; }
+.foottxt { text-align:center; font-size:.74rem; color:#6d6f73; margin-top:10px; }
+
+/* 기록 고르기 (1편·2편) */
+.eps { display:flex; gap:8px; padding-top:4px; }
+.ep { flex:1; min-width:0; text-align:left; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:11px 13px; color:var(--muted); cursor:pointer; display:flex; flex-direction:column; gap:3px; transition:border-color .15s, background .15s; }
+.ep b { font-family:'IBM Plex Mono',monospace; font-size:.7rem; font-weight:600; letter-spacing:.06em; color:var(--muted); }
+.ep span { font-size:.92rem; font-weight:800; color:#cfcfcd; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ep[aria-selected="true"] { border-color:var(--accent); background:rgba(240,24,94,.07); }
+.ep[aria-selected="true"] b { color:var(--accent); }
+.ep[aria-selected="true"] span { color:var(--text); }
+.ep .new { display:inline-block; margin-left:6px; font-family:'Pretendard Variable',sans-serif; font-size:.62rem; font-weight:800; color:#121314; background:var(--point); border-radius:6px; padding:1px 5px; vertical-align:1px; letter-spacing:0; }
+.kicker { margin:0 0 4px; font-size:.8rem; font-weight:700; color:var(--muted); }
+
+/* 분위기 그림: 실제 그림 대신 조명·안개 띠 (10/22 자기야 "그림은 분위기만") */
+.art.cold .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(125,211,252,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #030608, transparent 60%), linear-gradient(#1d2a33, #121a20 60%, #0b0f12); }
+.art.cold .fog, .art.red .fog { filter:none; }
+.art.cold img { filter:none; object-position:50% 18%; }   /* 2편 표지 = 00호 인장(세로 그림 → 1:1 로 머리·손 보이게) */
+/* 장면 CG (2편 · 자기야 그림 10/22) — 그림이 있으면 분위기 띠가 16:9 CG 카드로 바뀜 */
+.mood.cg { height:auto; aspect-ratio:16/9; padding:14px 16px; }
+.mood.cg img { filter:none; }
+.mood.cg::after { opacity:.18; }
+.mood.cg .cgshade { position:absolute; inset:0; z-index:0; background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(10,11,12,.85)); }
+.art.red .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(240,24,94,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #050506, transparent 60%), linear-gradient(#33242a, #201a1d 60%, #121314); }
+.mood { position:relative; height:118px; border-radius:14px; overflow:hidden; border:1px solid var(--border); scroll-margin-top:72px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px; padding:14px 16px; opacity:0; transition:opacity .8s; }
+.mood.in { opacity:1; }
+.mood::before { content:""; position:absolute; inset:0; background:var(--mbg); animation:breathe 7s ease-in-out infinite alternate; }
+.mood::after { content:""; position:absolute; inset:0; opacity:.45; mix-blend-mode:overlay; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.7'/></svg>"); }
+.mood > * { position:relative; z-index:1; }
+.mood .mt::before { content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--mline, var(--accent)); box-shadow:0 0 10px var(--mline, var(--accent)); margin-right:8px; vertical-align:1px; animation:blink 2.4s ease-in-out infinite; }
+@keyframes blink { 50% { opacity:.35; } }
+.mood .mt { font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600; letter-spacing:.06em; color:rgba(242,242,240,.7); }
+.mood .mp { font-family:'Pretendard Variable',sans-serif; font-size:1.05rem; font-weight:800; color:var(--text); letter-spacing:-.01em; text-shadow:0 1px 12px rgba(0,0,0,.6); }
+.mood img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:grayscale(1) contrast(1.08) brightness(.55); }
+@keyframes breathe { from { transform:scale(1); filter:brightness(.9); } to { transform:scale(1.06); filter:brightness(1.15); } }
+@media (prefers-reduced-motion: reduce) { .mood::before { animation:none; } }
+.opt .cost { display:inline-flex; align-items:center; gap:3px; margin-left:6px; font-family:'Pretendard Variable',sans-serif; font-size:.68rem; font-weight:800; color:var(--point); border:1px solid rgba(217,255,63,.35); border-radius:6px; padding:1px 5px; vertical-align:1px; white-space:nowrap; }
+.log .epi { color:#d8d6d2; }
+.log .endmark { text-align:center; font-family:'IBM Plex Mono',monospace; font-size:.78rem; letter-spacing:.2em; color:var(--muted); }
+
+/* 00호 고르기 (그 / 그녀) */
+.gsel { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gbtn { display:flex; align-items:center; gap:12px; padding:10px; border-radius:14px; background:var(--panel); border:1px solid var(--border); color:var(--muted); cursor:pointer; font:inherit; text-align:left; }
+.gbtn .gimg { flex-shrink:0; width:52px; height:52px; border-radius:12px; background:#1F2023 center 18%/cover no-repeat; }
+.gbtn b { font-size:1rem; font-weight:800; color:#cfcfcd; }
+.gbtn[aria-pressed="true"] { border-color:var(--accent); background:rgba(240,24,94,.07); }
+.gbtn[aria-pressed="true"] b { color:var(--text); }
+
+/* 결말 */
+.end { display:flex; flex-direction:column; gap:10px; padding-bottom:max(24px, env(safe-area-inset-bottom,0px)); }
+.end canvas { width:100%; height:auto; display:block; border-radius:16px; border:1px solid var(--border); }
+.row { display:flex; gap:8px; }
+.row > * { flex:1; }
+.tb { display:block; text-align:center; text-decoration:none; }
+.toast { text-align:center; font-size:.8rem; color:var(--muted); min-height:1.2em; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar" id="topbar">
+    <div class="brand"><img src="logo.svg" alt="">DOPA <span>· 기록보관소</span></div>
+    <div class="stats hide" id="stats"></div>
+  </header>
+
+  <!-- 표지 -->
+  <section class="cover" id="cover">
+    <div class="eps" id="eps" role="tablist" aria-label="기록 고르기"></div>
+    <div class="art" id="coverArt"><div class="fog"></div><img id="coverImg" alt="" class="hide"><div class="shade"></div>
+      <div class="tagrow" id="coverChips"></div></div>
+    <div>
+      <p class="kicker" id="coverKicker"></p>
+      <h1 id="coverTitle"></h1>
+    </div>
+    <p class="lead" id="coverLead"></p>
+    <div id="gender"></div>
+    <div class="card">
+      <p class="label">현장 규칙</p>
+      <ul class="rules" id="coverRules"></ul>
+    </div>
+    <div>
+      <p class="label">들어갈 캐릭터</p>
+      <input class="input" type="text" id="name" maxlength="12" placeholder="캐릭터 이름" autocomplete="off">
+      <div class="prow"><div class="thumb" id="thumb"></div><button type="button" class="btn flex" id="pick">캐릭터 사진 넣기 (선택)</button><input type="file" id="file" accept="image/*" class="hide"></div>
+    </div>
+    <button type="button" class="btn main" id="start" disabled>순찰 시작</button>
+    <p class="fine">캐릭터 사진은 플레이 화면·결말 카드에 나와요 (이 기기 밖으로 안 나가요) · 모든 기록은 픽션입니다</p>
+  </section>
+
+  <!-- 플레이 (도파 플레이 화면 모양) -->
+  <section class="hide" id="play" style="display:flex;flex-direction:column;min-height:100dvh">
+    <div class="playbar" id="playbar"></div>
+    <div class="log" id="log"></div>
+    <div class="dock">
+      <div class="choices" id="sugg"></div>
+      <div class="foottxt"><span id="pnum">01/10</span> · DOPA 기록보관소 · 미리 써 둔 선택형 이야기</div>
+    </div>
+  </section>
+
+  <!-- 결말 -->
+  <section class="end hide" id="end">
+    <canvas id="card" width="1080" height="1350"></canvas>
+    <div class="row"><button type="button" class="btn main" id="save">기록 저장</button><button type="button" class="btn" id="copy">결과 문구 복사</button></div>
+    <a class="btn point tb" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">이런 괴담을 내 캐릭터로 끝까지 · 텀블벅 알림 신청</a>
+    <button type="button" class="btn" id="again">다른 캐릭터로 다시 순찰</button>
+    <div class="toast" id="toast"></div>
+  </section>
+</div>
+<script>window.PRESET_GENDER = "f";</script>
+<script src="data.js"></script>
+<script src="ep2.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
