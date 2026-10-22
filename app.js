@@ -16,6 +16,20 @@
   const batchim = (w) => { const c = String(w).trim().slice(-1).charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 ? (c - 0xac00) % 28 !== 0 : /[lmnr]$/i.test(w); };
   const fill = (t) => { const b = batchim(name); return String(t).replace(/\{N\}\{은\}/g, name + (b ? "은" : "는")).replace(/\{N\}\{이\}/g, name + (b ? "이" : "가")).replace(/\{N\}\{을\}/g, name + (b ? "을" : "를")).replace(/\{N\}\{와\}/g, name + (b ? "과" : "와")).replace(/\{N\}\{아\}/g, name + (b ? "아" : "야")).replace(/\{N\}/g, name); };
 
+  // 이야기 줄나눔 (10/22 자기야): 따로 선 대사 "…" 는 앞뒤 서술과 줄을 나눔 · "…"라는/하고 처럼 붙은 대사는 그대로
+  function brk(t) {
+    let out = "", open = false;
+    const s = Array.from(t);
+    s.forEach((ch, k) => {
+      if (ch === '"') {
+        if (!open) { if (k > 0 && s[k - 1] === " " && /[.!?…]/.test(s[k - 2] || "")) out = out.replace(/ $/, "\n"); open = true; }
+        else { open = false; out += ch; if (s[k + 1] === " ") { out += "\n"; s[k + 1] = ""; } return; }
+      }
+      out += ch;
+    });
+    return out;
+  }
+
   // 그림: img/<key>.webp|jpg|png 가 있으면 그걸, 없으면 안개 배경
   function setArt(imgEl, key) {
     imgEl.classList.add("hide");
@@ -118,7 +132,7 @@
   function scene() {
     const sc = S.scenes[i];
     drawStats(); const mood = addMood(sc); requestAnimationFrame(() => mood.classList.add("in"));
-    const ps = sc.text.map((t) => { const p = document.createElement("p"); p.textContent = fill(t); log().appendChild(p); return p; });
+    const ps = sc.text.map((t) => { const p = document.createElement("p"); p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     reveal(ps); setDock(sc.choices);
     if (i > 0) setTimeout(() => mood.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
@@ -132,12 +146,12 @@
     drawStats(hit.filter((k) => (c.fx[k] || 0) < 0));
     const mine = document.createElement("p"); mine.className = "mine"; mine.textContent = fill(c.t); log().appendChild(mine);
     const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없어요</span><span>${path.length}턴</span>`; log().appendChild(meta);
-    const p = document.createElement("p"); p.textContent = fill(c.r); log().appendChild(p);
+    const p = document.createElement("p"); p.textContent = brk(fill(c.r)); log().appendChild(p);
     const add = [mine, p];
     if (deltas.length) { const d = document.createElement("div"); d.className = "deltas"; d.innerHTML = deltas.map(([k, v]) => `<span class="delta${v > 0 ? " up" : ""}">${LABEL[k]} ${v > 0 ? "+" : "−"}${Math.abs(v)}</span>`).join(""); log().appendChild(d); }
     const dead = st.hp <= 0 ? "hp" : st.san <= 0 ? "san" : null;
     if (dead && S.deathImg) { const cg = addMood({ tag: `${String(S.scenes[i].tag).split("·")[0].trim()} · 기록 중단`, img: S.deathImg, mark: "중단" }); requestAnimationFrame(() => cg.classList.add("in")); }   /* 체력·정신 0 CG (2편) */
-    if (dead) { const q = document.createElement("p"); q.textContent = fill(S.deaths[dead]); log().appendChild(q); add.push(q); }
+    if (dead) { const q = document.createElement("p"); q.textContent = brk(fill(S.deaths[dead])); log().appendChild(q); add.push(q); }
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
     else if (i + 1 < S.scenes.length) setDock(null, { label: "계속 ▸", go: () => { i++; scene(); } });
@@ -164,7 +178,7 @@
     const res = judge();
     if (!res.e.epi) return finish();
     const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: res.e.img, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
-    const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = fill(t); log().appendChild(p); return p; });
+    const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
     reveal(add); setTimeout(() => cg.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     setDock(null, { label: "기록 열람 ▸", go: () => finish() });
