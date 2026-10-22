@@ -146,7 +146,12 @@ button { font-family:inherit; }
 /* 분위기 그림: 실제 그림 대신 조명·안개 띠 (10/22 자기야 "그림은 분위기만") */
 .art.cold .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(125,211,252,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #030608, transparent 60%), linear-gradient(#1d2a33, #121a20 60%, #0b0f12); }
 .art.cold .fog, .art.red .fog { filter:none; }
-.art.cold img, .log .sceneart.cold img { filter:grayscale(.6) contrast(1.05) brightness(.9) hue-rotate(170deg); }
+.art.cold img { filter:none; object-position:50% 18%; }   /* 2편 표지 = 00호 인장(세로 그림 → 1:1 로 머리·손 보이게) */
+/* 장면 CG (2편 · 자기야 그림 10/22) — 그림이 있으면 분위기 띠가 16:9 CG 카드로 바뀜 */
+.mood.cg { height:auto; aspect-ratio:16/9; padding:14px 16px; }
+.mood.cg img { filter:none; }
+.mood.cg::after { opacity:.18; }
+.mood.cg .cgshade { position:absolute; inset:0; z-index:0; background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(10,11,12,.85)); }
 .art.red .fog { background:radial-gradient(ellipse 50% 45% at 50% 60%, rgba(240,24,94,.20), transparent 70%), radial-gradient(ellipse 120% 70% at 50% 115%, #050506, transparent 60%), linear-gradient(#33242a, #201a1d 60%, #121314); }
 .mood { position:relative; height:118px; border-radius:14px; overflow:hidden; border:1px solid var(--border); scroll-margin-top:72px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px; padding:14px 16px; opacity:0; transition:opacity .8s; }
 .mood.in { opacity:1; }

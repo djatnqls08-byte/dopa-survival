@@ -36,7 +36,7 @@
     $("coverRules").innerHTML = S.rules.map((r, k) => `<li><b>0${k + 1}</b><span>${esc(r)}</span></li>`).join("");
     $("start").textContent = S.id === "ep2" ? "관측 시작" : "순찰 시작";
     $("again").textContent = S.id === "ep2" ? "다른 캐릭터로 다시 관측" : "다른 캐릭터로 다시 순찰";
-    setArt($("coverImg"), S.id === "ep1" ? "cover" : `${S.id}_cover`);
+    setArt($("coverImg"), S.cover || "cover");
   }
   $("eps").innerHTML = EPS.map((e, k) => `<button type="button" class="ep" role="tab" aria-selected="false"><b>기록 ${String(k + 1).padStart(2, "0")} · ${esc(e.code)}${k === EPS.length - 1 && k > 0 ? '<i class="new">NEW</i>' : ""}</b><span>${esc(e.title)}</span></button>`).join("");
   document.querySelectorAll(".ep").forEach((b, k) => b.addEventListener("click", () => pickEp(k)));
@@ -91,9 +91,9 @@
     const box = document.createElement("div"); box.className = "mood";
     box.style.setProperty("--mbg", `radial-gradient(ellipse 45% 70% at ${x}% ${y}%, rgba(${c},.62), transparent 72%), radial-gradient(ellipse 90% 60% at ${100 - x}% 115%, rgba(${c},.26), transparent 70%), linear-gradient(90deg, transparent, rgba(${c},.10) ${x}%, transparent), linear-gradient(160deg, #1d1e22, #0b0c0e)`);
     box.style.setProperty("--mline", `rgb(${c})`);
-    box.innerHTML = `<div class="mt">${esc(when)} · 기록 ${String(i + 1).padStart(2, "0")}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
+    box.innerHTML = `<div class="mt">${esc(when)} · ${sc.mark || `기록 ${String(i + 1).padStart(2, "0")}`}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
     log().appendChild(box);
-    if (sc.img) { const tries = ["webp", "jpg", "png"].map((e) => `img/${sc.img}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; box.prepend(im); }; t.onerror = next; t.src = u; }; next(); }
+    if (sc.img) { const tries = ["webp", "jpg", "png"].map((e) => `img/${sc.img}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
     return box;
   }
   // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
@@ -160,9 +160,10 @@
   function epilogue() {
     const res = judge();
     if (!res.e.epi) return finish();
+    const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: res.e.img, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
     const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = fill(t); log().appendChild(p); return p; });
     const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
-    reveal(add); setTimeout(() => add[0].scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    reveal(add); setTimeout(() => cg.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     setDock(null, { label: "기록 열람 ▸", go: () => finish() });
   }
   async function finish(forced) {
@@ -193,8 +194,8 @@
     const SERIF = "'Gowun Batang', serif", MONO = "'IBM Plex Mono', monospace", SANS = "'Pretendard Variable', Pretendard, sans-serif";
     ctx.fillStyle = "#121314"; ctx.fillRect(0, 0, W, H);   // 도파 나이트 바탕
     // 위: 그림 (결말 그림 → 없으면 안개) + 캐릭터 사진(흑백 폴라로이드)
-    const ei = await firstImg(e.img);
-    ctx.save(); ctx.filter = "grayscale(1) contrast(1.05)"; if (ei) cover(ctx, ei, 0, 0, W, AH); else fog(ctx, 0, 0, W, AH); ctx.restore();
+    const ei = (await firstImg(e.img)) || (S.cover ? await firstImg(S.cover) : null);   // 결말 CG 없으면 그 편의 인장
+    ctx.save(); if (S.id === "ep1") ctx.filter = "grayscale(1) contrast(1.05)"; if (ei) cover(ctx, ei, 0, 0, W, AH); else fog(ctx, 0, 0, W, AH); ctx.restore();   /* 2편 CG 는 색 그대로 */
     const vg = ctx.createLinearGradient(0, AH * 0.45, 0, AH); vg.addColorStop(0, "rgba(18,19,20,0)"); vg.addColorStop(1, "rgba(18,19,20,1)"); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, AH);
     ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(60, 56, 470, 50); ctx.fillStyle = "#fff"; ctx.font = `600 22px ${MONO}`; ctx.fillText(`DOPA 기록보관소 · No. D-${S.code.slice(1)}-${caseNo}`, 78, 89);
     if (photo) {
