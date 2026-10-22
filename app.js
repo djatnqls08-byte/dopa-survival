@@ -79,7 +79,7 @@
     hp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg>',
     san: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg>',
     bat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/></svg>',
-    undo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"/></svg>',
+    lock: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',   /* 결정 잠김 */
   };
   const LABEL = { hp: "체력", san: "정신", bat: "배터리" };
   const MAX = { hp: 3, san: 5, bat: 3 };
@@ -150,7 +150,7 @@
       const av = document.createElement("span"); av.className = "av"; av.style.backgroundImage = `url(${photoUrl})`; mine.appendChild(av);
       const box = document.createElement("span"); box.className = "say"; const nm = document.createElement("b"); nm.textContent = name; box.appendChild(nm); box.appendChild(document.createTextNode(fill(c.t))); mine.appendChild(box);
     } else mine.textContent = fill(c.t);
-    const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.undo}되돌릴 수 없어요</span><span>${path.length}턴</span>`; log().appendChild(meta);
+    const meta = document.createElement("div"); meta.className = "meta"; meta.innerHTML = `<span>${ICON.lock}이미 내린 결정은 되돌릴 수 없다</span><span>${path.length}턴</span>`; log().appendChild(meta);
     const p = document.createElement("p"); p.textContent = brk(fill(c.r)); log().appendChild(p);
     const add = [mine, p];
     if (deltas.length) { const d = document.createElement("div"); d.className = "deltas"; d.innerHTML = deltas.map(([k, v]) => `<span class="delta${v > 0 ? " up" : ""}">${LABEL[k]} ${v > 0 ? "+" : "−"}${Math.abs(v)}</span>`).join(""); log().appendChild(d); }
