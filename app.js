@@ -9,7 +9,9 @@
   }
   let S = EPS[0];
   const $ = (id) => document.getElementById(id);
-  let name = "", photo = null, photoUrl = "", i = 0, st = {}, ax = {}, path = [];
+  let name = "", photo = null, photoUrl = "", i = 0, step = 0, endKey = null, st = {}, ax = {}, path = [];
+  // 갈래 길(10/22): 장면에 id, 선택지에 go(다음 장면 id) · end(결말 키, "solo" = 동행 점수로 안전/관찰) · 없으면 다음 칸
+  const sceneAt = (id) => S.scenes.findIndex((x) => x.id === id);
   const caseNo = String(Math.floor(1000 + Math.random() * 9000));
 
   // 받침에 맞는 조사
@@ -67,7 +69,7 @@
   });
   $("start").addEventListener("click", () => {
     if (!name) return;
-    i = 0; st = { ...S.start }; ax = { rule: 0, caution: 0, curious: 0, bond: 0, mirror: 0 }; path = [];
+    i = 0; step = 0; endKey = null; st = { ...S.start }; ax = { rule: 0, caution: 0, curious: 0, bond: 0, mirror: 0 }; path = [];
     $("log").innerHTML = "";
     $("cover").classList.add("hide"); $("end").classList.add("hide"); $("topbar").classList.add("hide"); $("play").classList.remove("hide");
     window.scrollTo({ top: 0 }); scene();
@@ -103,11 +105,11 @@
   }
   function addMood(sc) {
     const [when, ...rest] = String(sc.tag || "").split("·").map((x) => x.trim());
-    const c = LIGHT[lightOf(sc)], x = 20 + ((i * 37) % 60), y = 30 + ((i * 23) % 40);
+    const c = LIGHT[lightOf(sc)], x = 20 + ((step * 37) % 60), y = 30 + ((step * 23) % 40);
     const box = document.createElement("div"); box.className = "mood";
     box.style.setProperty("--mbg", `radial-gradient(ellipse 45% 70% at ${x}% ${y}%, rgba(${c},.62), transparent 72%), radial-gradient(ellipse 90% 60% at ${100 - x}% 115%, rgba(${c},.26), transparent 70%), linear-gradient(90deg, transparent, rgba(${c},.10) ${x}%, transparent), linear-gradient(160deg, #1d1e22, #0b0c0e)`);
     box.style.setProperty("--mline", `rgb(${c})`);
-    box.innerHTML = `<div class="mt">${esc(when)} · ${sc.mark || `기록 ${String(i + 1).padStart(2, "0")}`}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
+    box.innerHTML = `<div class="mt">${esc(when)} · ${sc.mark || `기록 ${String(step).padStart(2, "0")}`}</div><div class="mp">${esc(rest.join(" · ") || S.title)}</div>`;
     log().appendChild(box);
     if (sc.img) { const tries = ["webp", "jpg", "png"].map((e) => `img/${sc.img}.${e}`); const next = () => { const u = tries.shift(); if (!u) return; const t = new Image(); t.onload = () => { const im = document.createElement("img"); im.alt = ""; im.src = u; const sh = document.createElement("div"); sh.className = "cgshade"; box.prepend(sh); box.prepend(im); box.classList.add("cg"); }; t.onerror = next; t.src = u; }; next(); }
     return box;
@@ -115,7 +117,7 @@
   // 아래: 선택지 카드 (입력창처럼 보이면 직접 쓸 수 있는 줄 알아서 · 10/22 자기야) · 고른 뒤엔 '계속' 버튼
   function setDock(choices, next) {
     const sg = $("sugg"); sg.innerHTML = "";
-    $("pnum").textContent = `기록 ${String(Math.min(i + 1, S.scenes.length)).padStart(2, "0")}/${S.scenes.length}`;
+    $("pnum").textContent = `기록 ${String(step).padStart(2, "0")}`;
     if (choices) {
       const hint = document.createElement("div"); hint.className = "hint"; hint.textContent = "어떻게 할까?"; sg.appendChild(hint);
       choices.forEach((c, n) => {
@@ -130,11 +132,11 @@
     }
   }
   function scene() {
-    const sc = S.scenes[i];
+    const sc = S.scenes[i]; step++;
     drawStats(); const mood = addMood(sc); requestAnimationFrame(() => mood.classList.add("in"));
     const ps = sc.text.map((t) => { const p = document.createElement("p"); p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     reveal(ps); setDock(sc.choices);
-    if (i > 0) setTimeout(() => mood.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    if (step > 1) setTimeout(() => mood.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   }
   function choose(c) {
     path.push(c.t);
@@ -159,8 +161,12 @@
     if (dead) { const q = document.createElement("p"); q.textContent = brk(fill(S.deaths[dead])); log().appendChild(q); add.push(q); }
     reveal(add); setTimeout(() => mine.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     if (dead) setDock(null, { label: "기록 열람 ▸", go: () => finish(dead === "hp" ? "lost" : "redacted") });
-    else if (i + 1 < S.scenes.length) setDock(null, { label: "계속 ▸", go: () => { i++; scene(); } });
-    else setDock(null, { label: "06:00 · 결말 ▸", go: () => epilogue() });
+    else if (c.end) setDock(null, { label: "06:00 · 결말 ▸", go: () => epilogue(c.end) });
+    else {
+      const nx = c.go ? sceneAt(c.go) : i + 1;
+      if (nx >= 0 && nx < S.scenes.length) setDock(null, { label: "계속 ▸", go: () => { i = nx; scene(); } });
+      else setDock(null, { label: "06:00 · 결말 ▸", go: () => epilogue() });
+    }
   }
 
   // ── 판정 ──
@@ -179,14 +185,16 @@
     return { key, e, prob };
   }
   // 결말 후일담 (있는 편만) → 기록 열람
-  function epilogue() {
-    const res = judge();
-    if (!res.e.epi) return finish();
+  function epilogue(key) {
+    endKey = key === "solo" ? (ax.bond >= 4 ? "watch" : "safe") : key || null;
+    const res = judge(endKey);
+    endKey = res.key;
+    if (!res.e.epi) return finish(endKey);
     const cg = addMood({ tag: `06:00 · ${res.e.title}`, img: res.e.img, mark: "결말" }); requestAnimationFrame(() => cg.classList.add("in"));
     const add = res.e.epi.map((t) => { const p = document.createElement("p"); p.className = "epi"; p.textContent = brk(fill(t)); log().appendChild(p); return p; });
     const m = document.createElement("p"); m.className = "endmark"; m.textContent = `— ${res.e.title} —`; log().appendChild(m); add.push(m);
     reveal(add); setTimeout(() => cg.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-    setDock(null, { label: "기록 열람 ▸", go: () => finish() });
+    setDock(null, { label: "기록 열람 ▸", go: () => finish(endKey) });
   }
   async function finish(forced) {
     const res = judge(forced);
