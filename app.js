@@ -47,7 +47,7 @@
     $("coverKicker").textContent = `DOPA 기록보관소 · 기록 ${String(n + 1).padStart(2, "0")}`;
     $("coverTitle").textContent = S.title;
     $("coverLead").textContent = S.lead;
-    $("coverRules").innerHTML = S.rules.map((r, k) => `<li><b>0${k + 1}</b><span>${esc(r)}</span></li>`).join("");
+    $("coverRules").innerHTML = S.rules.map((r, k) => `<li><b>0${k + 1}</b><span>${esc(r).replace(/, /g, ",<br>")}</span></li>`).join("");
     $("start").textContent = S.id === "ep2" ? "관측 시작" : "순찰 시작";
     $("again").textContent = S.id === "ep2" ? "다른 캐릭터로 다시 관측" : "다른 캐릭터로 다시 순찰";
     setArt($("coverImg"), S.cover || "cover");
