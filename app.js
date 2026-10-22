@@ -1,7 +1,7 @@
 // survival/app.js — 선택형 텍스트 RPG 엔진 (표지 → 장면·선택 → 결과 → 결말 기록 PNG)
 (() => {
   // 기록(편) 목록 · 2편 결말은 1편의 등급·색·확률·추천 괴담을 물려받고 글만 바꿈
-  const EPS = [window.STORY];
+  const EPS = [];   // 10/22 자기야: 1편(지하 4층)은 빼고 2편(인외 · 00호)만 공개 · 1편 데이터는 결말 등급·색 틀로만 씀
   if (window.STORY2) {
     const e2 = window.STORY2, en = {};
     Object.keys(window.STORY.endings).forEach((k) => { en[k] = { ...window.STORY.endings[k], ...(e2.endings[k] || {}) }; });
@@ -40,6 +40,8 @@
   }
   $("eps").innerHTML = EPS.map((e, k) => `<button type="button" class="ep" role="tab" aria-selected="false"><b>기록 ${String(k + 1).padStart(2, "0")} · ${esc(e.code)}${k === EPS.length - 1 && k > 0 ? '<i class="new">NEW</i>' : ""}</b><span>${esc(e.title)}</span></button>`).join("");
   document.querySelectorAll(".ep").forEach((b, k) => b.addEventListener("click", () => pickEp(k)));
+  if (!EPS.length) EPS.push(window.STORY);
+  if (EPS.length < 2) $("eps").classList.add("hide");
   pickEp(0);
 
   // ── 표지 ──
