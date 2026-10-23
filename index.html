@@ -40,6 +40,9 @@ button { font-family:inherit; }
 .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:.95rem; letter-spacing:-.01em; }
 .brand img { width:26px; height:26px; border-radius:8px; display:block; }
 .brand span { color:var(--muted); font-weight:600; }
+.tb-left { display:flex; align-items:center; gap:10px; min-width:0; }
+.back { display:inline-flex; align-items:center; gap:2px; height:34px; padding:0 12px 0 8px; border-radius:999px; border:1px solid var(--border2); color:inherit; text-decoration:none; font-size:.85rem; font-weight:700; white-space:nowrap; }
+.back:hover { border-color:currentColor; }
 
 /* 칩 */
 .chip { display:inline-flex; align-items:center; gap:5px; height:26px; padding:0 10px; border-radius:999px; font-size:.76rem; font-weight:700; border:1px solid var(--border); background:var(--panel2); color:var(--muted); white-space:nowrap; }
@@ -198,7 +201,11 @@ button { font-family:inherit; }
 <body>
 <div class="app">
   <header class="topbar" id="topbar">
-    <div class="brand"><img src="logo.svg" alt="">DOPA <span>· 기록보관소</span></div>
+    <div class="tb-left">
+      <a class="back hide" id="backTools" href="https://dopa-tools.vercel.app/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>도구함</a>
+      <div class="brand"><img src="logo.svg" alt="">DOPA <span>· 기록보관소</span></div>
+    </div>
+    <script>/* 10/23 자기야: 도구함에서 들어오면 돌아갈 길 */ (function () { try { var k = "dopa_from_tools", q = new URLSearchParams(location.search).get("from"), r = document.referrer || ""; if (q === "tools" || /dopa-tools.vercel.app/.test(r)) sessionStorage.setItem(k, "1"); if (sessionStorage.getItem(k) === "1") document.getElementById("backTools").classList.remove("hide"); } catch (e) {} })();</script>
     <div class="stats hide" id="stats"></div>
   </header>
 
