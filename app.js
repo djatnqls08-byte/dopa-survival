@@ -305,6 +305,6 @@
     const fit = (t) => { let u = t; while (ctx.measureText(u).width > maxL && u.length > 1) u = u.slice(0, -1); return u === t ? t : u.trimEnd() + "…"; };
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#f1eee7"; ctx.font = `700 28px ${SANS}`; ctx.fillText(fit(`${S.title} · 내 캐릭터로 해 보기`), 70, CY - 8);
-    ctx.font = `400 21px ${SANS}`; ctx.fillStyle = "#9A9DA2"; ctx.fillText(fit("설정을 잊지 않는 AI 인터랙티브 스토리 · 11/5 텀블벅 오픈"), 70, CY + 28);
+    ctx.font = `400 21px ${SANS}`; ctx.fillStyle = "#9A9DA2"; ctx.fillText(fit("설정을 잊지 않는 AI 인터랙티브 스토리 · 텀블벅 펀딩 ~12/6"), 70, CY + 28);
   }
 })();
