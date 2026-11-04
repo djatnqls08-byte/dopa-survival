@@ -82,7 +82,9 @@
   if (EPS.length < 2) $("eps").classList.add("hide");
   pickEp(0);
   track("view");
-  document.querySelector("#end .tb")?.addEventListener("click", () => track("tumblbug"));
+  const tbBtn = document.querySelector("#end .tb");
+  tbBtn?.addEventListener("click", () => track("tumblbug"));
+  if (tbBtn && Date.now() >= Date.parse("2026-11-05T11:00:00+09:00")) tbBtn.textContent = "텀블벅 보러 가기";   // 11/4 기획 방: 펀딩 오픈 뒤 결말 버튼 문구
 
   // ── 표지 ──
   $("name").addEventListener("input", (e) => { name = e.target.value.trim(); $("start").disabled = !name; });
